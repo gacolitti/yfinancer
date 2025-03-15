@@ -1,0 +1,188 @@
+#' Get A1 cookie from Yahoo Finance
+#'
+#' Uses curl_chrome110 to get the A1 cookie from Yahoo Finance
+#'
+#' @return A1 cookie string or NULL if not found
+#' @keywords internal
+get_a1_cookie <- function() {
+  # Check if curl_chrome110 is available
+  if (system("which curl_chrome110", ignore.stdout = TRUE) != 0) {
+    rlang::abort("curl_chrome110 command not found. Please install it to use this feature.")
+  }
+
+  # Use curl_chrome110 to get the A1 token cookie
+  cmd_output <- system("curl_chrome110 -v -s 'https://finance.yahoo.com' 2>&1 1> /dev/null", intern = TRUE)
+
+  # Extract set-cookie headers that contain "A1="
+  a1_lines <- cmd_output[grepl("set-cookie:", tolower(cmd_output)) & grepl("A1=", cmd_output, fixed = TRUE)]
+
+  # If no A1 cookie was found, return NULL
+  if (length(a1_lines) == 0) {
+    warning("No A1 cookie found in Yahoo Finance response")
+    return(NULL)
+  }
+
+  # Extract the A1 token
+  a1_token <- gsub(".*set-cookie: A1=([^;]+).*", "\\1", a1_lines[1], ignore.case = TRUE)
+  return(a1_token)
+}
+
+#' Get crumb using A1 cookie
+#'
+#' @param a1_cookie A1 cookie string
+#' @param proxy Optional proxy settings
+#' @return Crumb string or NULL if not found
+#' @keywords internal
+get_crumb <- function(a1_cookie, proxy = NULL) {
+  req_crumb <- httr2::request("https://query2.finance.yahoo.com/v1/test/getcrumb") |>
+    httr2::req_headers(
+      "User-Agent" = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/110.0.0.0 Safari/537.36",
+      "Accept" = "*/*",
+      "Accept-Language" = "en-US,en;q=0.9",
+      "Referer" = "https://finance.yahoo.com/",
+      "Origin" = "https://finance.yahoo.com",
+      "Sec-Fetch-Site" = "same-site",
+      "Sec-Fetch-Mode" = "cors",
+      "Sec-Fetch-Dest" = "empty",
+      "Cookie" = paste0("A1=", a1_cookie)
+    ) |>
+    httr2::req_timeout(30)
+
+  if (!is.null(proxy)) {
+    req_crumb <- req_crumb |> httr2::req_proxy(proxy)
+  }
+
+  tryCatch(
+    {
+      resp_crumb <- req_crumb |> httr2::req_perform()
+      crumb <- httr2::resp_body_string(resp_crumb)
+      return(crumb)
+    },
+    error = function(e) {
+      warning(sprintf("Failed to get crumb: %s", e$message))
+      return(NULL)
+    }
+  )
+}
+
+#' Read Auth File
+#'
+#' @param path Path to the authentication file
+#' @param refresh Whether to refresh the auth file
+#' @return NULL
+#' @keywords internal
+read_auth_file <- function(path = NULL, refresh = FALSE) {
+  if (is.null(path)) {
+    path <- "~/.yfinance/auth"
+  }
+  # Check if the file exists
+  if (!file.exists(path)) {
+    message("No authentication file found.")
+    return(NULL)
+  }
+
+  if (refresh) {
+    file.remove(path)
+  }
+
+  # Check if the file is valid JSON
+  json <- tryCatch(
+    {
+      jsonlite::fromJSON(path)
+    },
+    error = function(e) {
+      return(NULL)
+    }
+  )
+
+  # Check if the file is complete if it exists
+  if (!is.null(json)) {
+    if (all(c("a1_cookie", "crumb") %in% names(json))) {
+      should_message("Using existing authentication file.", path = path)
+      return(json)
+    }
+  }
+
+  # Fetch A1 cookie and crumb
+  a1_cookie <- get_a1_cookie()
+  crumb <- get_crumb(a1_cookie)
+
+  auth_data <- list(a1_cookie = a1_cookie, crumb = crumb)
+
+  # Write the authentication details to the file
+  message("Creating authentication file at ", path)
+  dir.create(dirname(path), showWarnings = FALSE, recursive = TRUE)
+  jsonlite::write_json(auth_data, path)
+  return(auth_data)
+}
+
+#' Get Yahoo Finance authentication (crumb)
+#'
+#' Tries multiple methods to get a crumb:
+#' 1. Check YAHOO_FINANCE_CRUMB environment variable
+#' 2. Get A1 cookie and use it to fetch a crumb
+#'
+#' @param req Request object
+#' @param proxy Optional proxy settings
+#' @param refresh Logical. If TRUE, force a refresh of the crumb.
+#' @inheritParams req_add_auth
+#' @return Request object with added authentication
+#' @keywords internal
+req_add_auth <- function(req, proxy = NULL, refresh = FALSE, path = NULL) {
+  # Check for A1 and crumb in ~/.yfinance/auth
+  auth <- read_auth_file(path, refresh)
+
+  # Add cookies to the request
+  req |>
+    httr2::req_url_query("crumb" = auth$crumb) |>
+    httr2::req_headers("Cookie" = paste0("A1=", auth$a1_cookie))
+}
+
+#' Control message frequency
+#'
+#' Shows a message only once every N hours
+#'
+#' @param msg The message to display
+#' @param interval Time interval in hours between showing messages
+#' @param path Path to the authentication file
+#' @return NULL invisibly
+#' @keywords internal
+should_message <- function(msg, interval = 8, path = NULL) {
+  if (is.null(path)) {
+    path <- "~/.yfinance/auth"
+  }
+  # Path to the timestamp file
+  timestamp_file <- file.path("~/.yfinance", "last_message_time")
+  dir.create("~/.yfinance", showWarnings = FALSE, recursive = TRUE)
+
+  current_time <- Sys.time()
+  can_message <- TRUE
+
+  # Check if the timestamp file exists
+  if (file.exists(timestamp_file)) {
+    tryCatch(
+      {
+        # Read the last message time
+        last_message_time <- as.POSIXct(readLines(timestamp_file)[1])
+
+        # Only message if more than 'interval' hours have passed
+        time_diff <- difftime(current_time, last_message_time, units = "hours")
+        if (time_diff < interval) {
+          can_message <- FALSE
+        }
+      },
+      error = function(e) {
+        # If there's an error reading the file, allow messaging
+        can_message <- TRUE
+      }
+    )
+  }
+
+  # If we can show a message, update the timestamp file and display the message
+  if (can_message) {
+    writeLines(as.character(current_time), timestamp_file)
+    message(msg)
+  }
+
+  invisible(NULL)
+}

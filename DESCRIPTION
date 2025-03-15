@@ -1,0 +1,29 @@
+Package: yfinancer
+Title: Yahoo Finance API for R
+Version: 0.0.0.9000
+Authors@R: 
+    person("Giovanni", "Colitti", email = "gcolitti@gmail.com", role = c("aut", "cre"))
+Description: A comprehensive wrapper for Yahoo Finance's API in R. This package 
+    allows users to download financial market data, access company information, 
+    financial statements, options data, and more from Yahoo Finance.
+License: MIT + file LICENSE
+Encoding: UTF-8
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.3.2
+Suggests: 
+    testthat (>= 3.0.0)
+Config/testthat/edition: 3
+Imports: 
+    httr2,
+    jsonlite,
+    purrr,
+    dplyr,
+    tibble,
+    lubridate,
+    rlang,
+    stringr,
+    tidyr,
+    glue
+Depends: 
+    R (>= 3.5)
+LazyData: true
