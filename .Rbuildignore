@@ -3,3 +3,5 @@
 ^data-raw$
 .windsurfrules
 ^LICENSE\.md$
+^codecov\.yml$
+^\.github$

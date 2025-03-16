@@ -1,10 +1,12 @@
-# yfinancer: Yahoo Finance API for R
-
-An R package that provides a wrapper for Yahoo Finance's API, allowing users to download market data and access various financial information.
-
-## Overview
+# yfinancer <a href="github.com/gacolitti/yfinancer"><img src="man/figures/logo.png" align="right" height="138" /></a>
 
 `yfinancer` provides access to Yahoo Finance's API for retrieving market data. The package includes functions for downloading historical price data, accessing company information, retrieving financial statements, and searching for tickers. It handles API interactions, data parsing, and returns results in tidy tibble format.
+
+<!-- badges: start -->
+[![experimental](https://img.shields.io/badge/experimental-orange.svg)](https://github.com/gaclitti/yfinancer)
+[![Codecov test coverage](https://codecov.io/gh/gacolitti/yfinancer/graph/badge.svg)](https://app.codecov.io/gh/gacolitti/yfinancer)
+[![R-CMD-check](https://github.com/gacolitti/yfinancer/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/gacolitti/yfinancer/actions/workflows/R-CMD-check.yaml)
+<!-- badges: end -->
 
 ## Usage Examples
 
