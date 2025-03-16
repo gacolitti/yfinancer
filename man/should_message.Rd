@@ -17,6 +17,6 @@ should_message(msg, interval = 8, path = NULL)
 NULL invisibly
 }
 \description{
-Shows a message only once every N hours
+Shows a message only once every \code{interval} hours
 }
 \keyword{internal}

@@ -12,6 +12,8 @@ req_add_auth(req, proxy = NULL, refresh = FALSE, path = NULL)
 \item{proxy}{Optional proxy settings}
 
 \item{refresh}{Logical. If TRUE, force a refresh of the crumb.}
+
+\item{path}{Path to authentication file. Default is ~/.yfinance/auth}
 }
 \value{
 Request object with added authentication
@@ -19,8 +21,8 @@ Request object with added authentication
 \description{
 Tries multiple methods to get a crumb:
 \enumerate{
-\item Check YAHOO_FINANCE_CRUMB environment variable
-\item Get A1 cookie and use it to fetch a crumb
+\item Check YFINANCE_CRUMB and YFINANCE_A1 environment variables
+\item If environment variables not available, get auth from ~/.yfinance/auth file
 }
 }
 \keyword{internal}

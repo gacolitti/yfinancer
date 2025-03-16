@@ -135,6 +135,7 @@ req_add_auth <- function(req, proxy = NULL, refresh = FALSE, path = NULL) {
   
   # If both environment variables are available, use them
   if (!is.na(env_crumb) && !is.na(env_a1)) {
+    should_message("Using environment variables for authentication.")
     return(req |>
       httr2::req_url_query("crumb" = env_crumb) |>
       httr2::req_headers("Cookie" = paste0("A1=", env_a1)))
@@ -151,7 +152,7 @@ req_add_auth <- function(req, proxy = NULL, refresh = FALSE, path = NULL) {
 
 #' Control message frequency
 #'
-#' Shows a message only once every N hours
+#' Shows a message only once every `interval` hours
 #'
 #' @param msg The message to display
 #' @param interval Time interval in hours between showing messages
@@ -160,11 +161,11 @@ req_add_auth <- function(req, proxy = NULL, refresh = FALSE, path = NULL) {
 #' @keywords internal
 should_message <- function(msg, interval = 8, path = NULL) {
   if (is.null(path)) {
-    path <- "~/.yfinance/auth"
+    path <- "~/.yfinance"
   }
   # Path to the timestamp file
-  timestamp_file <- file.path("~/.yfinance", "last_message_time")
-  dir.create("~/.yfinance", showWarnings = FALSE, recursive = TRUE)
+  timestamp_file <- file.path(path, "last_message_time")
+  dir.create(path, showWarnings = FALSE, recursive = TRUE)
 
   current_time <- Sys.time()
   can_message <- TRUE
