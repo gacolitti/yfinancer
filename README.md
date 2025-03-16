@@ -1,4 +1,16 @@
-# yfinancer <a href="github.com/gacolitti/yfinancer"><img src="man/figures/logo.png" align="right" height="138" /></a>
+
+  <!-- Float the logo to the right -->
+  <a href="https://github.com/gacolitti/yfinancer" style="float:right;">
+    <img src="man/figures/logo.png"
+         alt="yfinancer logo"
+         height="138"
+         width="138" />
+  </a>
+
+  <!-- Draw the bottom border only up to where the logo begins -->
+  <div style="margin-right: 150px;">
+    <h1 style="margin-bottom: 20px;">yfinancer</h1>
+  </div>
 
 `yfinancer` provides access to Yahoo Finance's API for retrieving market data. The package includes functions for downloading historical price data, accessing company information, retrieving financial statements, and searching for tickers. It handles API interactions, data parsing, and returns results in tidy tibble format.
 
@@ -72,6 +84,44 @@ results <- search_tickers("Apple", quotes_only = FALSE)
 quotes <- results$quotes
 news <- results$news
 ```
+
+### Authentication
+
+Yahoo Finance requires two key authentication components for API access of certain endpoints:
+
+1. **A1 Cookie**: A session cookie that identifies your session with Yahoo Finance
+2. **Crumb**: A security token that must be included with each request
+
+The authentication process in `yfinancer` follows these steps:
+
+1. **Environment Variables (first priority)**:
+   - Checks for `YFINANCE_CRUMB` and `YFINANCE_A1` environment variables
+   - If both are present, uses these values directly
+
+2. **Authentication File (second priority)**:
+   - If environment variables aren't available, checks for an existing auth file at `~/.yfinance/auth`
+   - If a valid auth file exists, uses the stored values
+
+3. **Dynamic Authentication (fallback)**:
+   - If no valid auth exists, generates new authentication:
+     - Gets an A1 cookie using curl_chrome110 to mimic a browser request 
+     - Uses the A1 cookie to request a crumb from Yahoo Finance
+     - Stores these values in `~/.yfinance/auth` for future use
+
+     Curl impersonate must be installed for this to work. See: https://github.com/lwthiker/curl-impersonate.
+
+```r
+# Set environment variables for authentication
+Sys.setenv(YFINANCE_CRUMB = "your-crumb-value")
+Sys.setenv(YFINANCE_A1 = "your-a1-cookie-value")
+
+```
+
+This environment variable approach is useful for:
+- Avoiding authentication failures in automated environments
+- Testing with specific authentication values
+
+Currently, only the `get_info()` function requires authentication.
 
 ## Core Features and Components
 

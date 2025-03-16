@@ -119,19 +119,30 @@ read_auth_file <- function(path = NULL, refresh = FALSE) {
 #' Get Yahoo Finance authentication (crumb)
 #'
 #' Tries multiple methods to get a crumb:
-#' 1. Check YAHOO_FINANCE_CRUMB environment variable
-#' 2. Get A1 cookie and use it to fetch a crumb
+#' 1. Check YFINANCE_CRUMB and YFINANCE_A1 environment variables
+#' 2. If environment variables not available, get auth from ~/.yfinance/auth file
 #'
 #' @param req Request object
 #' @param proxy Optional proxy settings
 #' @param refresh Logical. If TRUE, force a refresh of the crumb.
-#' @inheritParams req_add_auth
+#' @param path Path to authentication file. Default is ~/.yfinance/auth
 #' @return Request object with added authentication
 #' @keywords internal
 req_add_auth <- function(req, proxy = NULL, refresh = FALSE, path = NULL) {
-  # Check for A1 and crumb in ~/.yfinance/auth
+  # First check for environment variables
+  env_crumb <- Sys.getenv("YFINANCE_CRUMB", NA_character_)
+  env_a1 <- Sys.getenv("YFINANCE_A1", NA_character_)
+  
+  # If both environment variables are available, use them
+  if (!is.na(env_crumb) && !is.na(env_a1)) {
+    return(req |>
+      httr2::req_url_query("crumb" = env_crumb) |>
+      httr2::req_headers("Cookie" = paste0("A1=", env_a1)))
+  }
+  
+  # Otherwise, check for A1 and crumb in ~/.yfinance/auth
   auth <- read_auth_file(path, refresh)
-
+  
   # Add cookies to the request
   req |>
     httr2::req_url_query("crumb" = auth$crumb) |>
