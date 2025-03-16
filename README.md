@@ -1,4 +1,4 @@
-
+<div 
   <!-- Float the logo to the right -->
   <a href="https://github.com/gacolitti/yfinancer" style="float:right;">
     <img src="man/figures/logo.png"
@@ -11,6 +11,7 @@
   <div style="margin-right: 150px;">
     <h1 style="margin-bottom: 20px;">yfinancer</h1>
   </div>
+</div>
 
 `yfinancer` provides access to Yahoo Finance's API for retrieving market data. The package includes functions for downloading historical price data, accessing company information, retrieving financial statements, and searching for tickers. It handles API interactions, data parsing, and returns results in tidy tibble format.
 
@@ -85,7 +86,7 @@ quotes <- results$quotes
 news <- results$news
 ```
 
-### Authentication
+## Authentication
 
 Yahoo Finance requires two key authentication components for API access of certain endpoints:
 
@@ -131,23 +132,22 @@ Based on the Python yfinance package, the R port includes the following main com
    - ✅ Historical market data (OHLCV)
    - ✅ Basic company information
    - ✅ Financial statements (income statement, balance sheet, cash flow)
-   - ✅ Dividends and stock splits (included in get_history())
+   - ✅ Dividends and stock splits
    - ⬜ Options data
    - ⬜ Analyst recommendations and price targets
    - ⬜ News
 
 2. **Market Information**:
-   - ✅ Comprehensive company data via get_info() function with available modules including:
-     - Company profile and asset information
-     - Key statistics (PE, EPS, EBITDA, enterprise value, etc.)
-     - Financial KPIs (revenue, margins, cash flow metrics)
-     - Future earnings dates and earnings history
-     - ESG scores (environmental, social, governance metrics)
-     - Ownership data (insider, institutional, fund)
-     - Insider transactions
-     - Analyst recommendations and upgrade/downgrade history
-     - SEC filings
-     - And more (over 30 different data modules available)
+   - ✅ Company profile and asset information
+   - ✅ Key statistics (PE, EPS, EBITDA, enterprise value, etc.)
+   - ✅ Financial KPIs (revenue, margins, cash flow metrics)
+   - ✅ Future earnings dates and earnings history
+   - ✅ ESG scores (environmental, social, governance metrics)
+   - ✅ Ownership data (insider, institutional, fund)
+   - ✅ Insider transactions
+   - ✅ Analyst recommendations and upgrade/downgrade history
+   - ✅ SEC filings
+   - ✅ And more (over 30 different data modules available)
 
 3. **Search Functionality**:
    - ✅ Search for quotes
