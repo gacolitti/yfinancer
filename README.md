@@ -1,31 +1,37 @@
-<div 
-  <!-- Float the logo to the right -->
-  <a href="https://github.com/gacolitti/yfinancer" style="float:right;">
-    <img src="man/figures/logo.png"
-         alt="yfinancer logo"
-         height="138"
-         width="138" />
-  </a>
 
-  <!-- Draw the bottom border only up to where the logo begins -->
-  <div style="margin-right: 150px;">
-    <h1 style="margin-bottom: 20px;">yfinancer</h1>
-  </div>
-</div>
+<!-- README.md is generated from README.Rmd. Please edit that file -->
 
-`yfinancer` provides access to Yahoo Finance's API for retrieving market data. The package includes functions for downloading historical price data, accessing company information, retrieving financial statements, and searching for tickers. It handles API interactions, data parsing, and returns results in tidy tibble format.
+# yfinancer <a href="github.com/gacolitti/yfinancer"><img src="man/figures/logo.png" align="right" height="138" /></a>
+
+`yfinancer` provides access to Yahoo Finance’s API for retrieving market
+data. The package includes functions for downloading historical price
+data, accessing company information, retrieving financial statements,
+and searching for tickers. It handles API interactions, data parsing,
+and returns results in tidy tibble format.
 
 <!-- badges: start -->
-[![experimental](https://img.shields.io/badge/experimental-orange.svg)](https://github.com/gaclitti/yfinancer)
-[![Codecov test coverage](https://codecov.io/gh/gacolitti/yfinancer/graph/badge.svg)](https://app.codecov.io/gh/gacolitti/yfinancer)
+
 [![R-CMD-check](https://github.com/gacolitti/yfinancer/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/gacolitti/yfinancer/actions/workflows/R-CMD-check.yaml)
+[![Codecov test
+coverage](https://codecov.io/gh/gacolitti/yfinancer/graph/badge.svg)](https://app.codecov.io/gh/gacolitti/yfinancer)
+[![experimental](https://img.shields.io/badge/experimental-orange.svg)](https://github.com/gaclitti/yfinancer)
 <!-- badges: end -->
+
+## Installation
+
+You can install the development version of yfinancer from
+[GitHub](https://github.com/) with:
+
+``` r
+# install.packages("pak")
+pak::pak("gacolitti/yfinancer")
+```
 
 ## Usage Examples
 
 ### Working with a Single Ticker
 
-```r
+``` r
 # Get a ticker object for Apple Inc.
 apple <- get_tickers("AAPL")
 
@@ -63,7 +69,7 @@ quarterly_income <- get_income_statement(apple, freq = "quarterly")
 
 ### Working with Multiple Tickers
 
-```r
+``` r
 # Get multiple tickers
 tech_tickers <- get_tickers(c("AAPL", "MSFT", "GOOG"))
 
@@ -76,7 +82,7 @@ tech_info <- get_tickers_info(tech_tickers)
 
 ### Search for Tickers
 
-```r
+``` r
 # Search for companies with "tech" in their name
 tech_search <- search_tickers("tech", limit = 20)
 
@@ -88,79 +94,85 @@ news <- results$news
 
 ## Authentication
 
-Yahoo Finance requires two key authentication components for API access of certain endpoints:
+Yahoo Finance requires two key authentication components for API access
+of certain endpoints:
 
-1. **A1 Cookie**: A session cookie that identifies your session with Yahoo Finance
-2. **Crumb**: A security token that must be included with each request
+1.  **A1 Cookie**: A session cookie that identifies your session with
+    Yahoo Finance
+2.  **Crumb**: A security token that must be included with each request
 
 The authentication process in `yfinancer` follows these steps:
 
-1. **Environment Variables (first priority)**:
-   - Checks for `YFINANCE_CRUMB` and `YFINANCE_A1` environment variables
-   - If both are present, uses these values directly
+1.  **Environment Variables (first priority)**:
+    - Checks for `YFINANCE_CRUMB` and `YFINANCE_A1` environment
+      variables
+    - If both are present, uses these values directly
+2.  **Authentication File (second priority)**:
+    - If environment variables aren’t available, checks for an existing
+      auth file at `~/.yfinance/auth`
+    - If a valid auth file exists, uses the stored values
+3.  **Dynamic Authentication (fallback)**:
+    - If no valid auth exists, generates new authentication:
+      - Gets an A1 cookie using curl_chrome110 to mimic a browser
+        request
+      - Uses the A1 cookie to request a crumb from Yahoo Finance
+      - Stores these values in `~/.yfinance/auth` for future use
 
-2. **Authentication File (second priority)**:
-   - If environment variables aren't available, checks for an existing auth file at `~/.yfinance/auth`
-   - If a valid auth file exists, uses the stored values
+      Curl impersonate must be installed for this to work. See:
+      <https://github.com/lwthiker/curl-impersonate>.
 
-3. **Dynamic Authentication (fallback)**:
-   - If no valid auth exists, generates new authentication:
-     - Gets an A1 cookie using curl_chrome110 to mimic a browser request 
-     - Uses the A1 cookie to request a crumb from Yahoo Finance
-     - Stores these values in `~/.yfinance/auth` for future use
-
-     Curl impersonate must be installed for this to work. See: https://github.com/lwthiker/curl-impersonate.
-
-```r
+``` r
 # Set environment variables for authentication
 Sys.setenv(YFINANCE_CRUMB = "your-crumb-value")
 Sys.setenv(YFINANCE_A1 = "your-a1-cookie-value")
-
 ```
 
-This environment variable approach is useful for:
-- Avoiding authentication failures in automated environments
-- Testing with specific authentication values
+This environment variable approach is useful for: - Avoiding
+authentication failures in automated environments - Testing with
+specific authentication values
 
 Currently, only the `get_info()` function requires authentication.
 
 ## Core Features and Components
 
-Based on the Python yfinance package, the R port includes the following main components:
+Based on the Python yfinance package, the R port includes the following
+main components:
 
-1. **Ticker Functions**: Access single ticker data
-   - ✅ Historical market data (OHLCV)
-   - ✅ Basic company information
-   - ✅ Financial statements (income statement, balance sheet, cash flow)
-   - ✅ Dividends and stock splits
-   - ⬜ Options data
-   - ⬜ Analyst recommendations and price targets
-   - ⬜ News
-
-2. **Market Information**:
-   - ✅ Company profile and asset information
-   - ✅ Key statistics (PE, EPS, EBITDA, enterprise value, etc.)
-   - ✅ Financial KPIs (revenue, margins, cash flow metrics)
-   - ✅ Future earnings dates and earnings history
-   - ✅ ESG scores (environmental, social, governance metrics)
-   - ✅ Ownership data (insider, institutional, fund)
-   - ✅ Insider transactions
-   - ✅ Analyst recommendations and upgrade/downgrade history
-   - ✅ SEC filings
-   - ✅ And more (over 30 different data modules available)
-
-3. **Search Functionality**:
-   - ✅ Search for quotes
-   - ✅ Get news from search
-
-4. **Screener Tools**:
-   - ⬜ Build equity and fund queries
-   - ⬜ Screen market based on criteria
+1.  **Ticker Functions**: Access single ticker data
+    - ✅ Historical market data (OHLCV)
+    - ✅ Basic company information
+    - ✅ Financial statements (income statement, balance sheet, cash
+      flow)
+    - ✅ Dividends and stock splits
+    - ⬜ Options data
+    - ⬜ Analyst recommendations and price targets
+    - ⬜ News
+2.  **Market Information**:
+    - ✅ Company profile and asset information
+    - ✅ Key statistics (PE, EPS, EBITDA, enterprise value, etc.)
+    - ✅ Financial KPIs (revenue, margins, cash flow metrics)
+    - ✅ Future earnings dates and earnings history
+    - ✅ ESG scores (environmental, social, governance metrics)
+    - ✅ Ownership data (insider, institutional, fund)
+    - ✅ Insider transactions
+    - ✅ Analyst recommendations and upgrade/downgrade history
+    - ✅ SEC filings
+    - ✅ And more (over 30 different data modules available)
+3.  **Search Functionality**:
+    - ✅ Search for quotes
+    - ✅ Get news from search
+4.  **Screener Tools**:
+    - ⬜ Build equity and fund queries
+    - ⬜ Screen market based on criteria
 
 ## Legal Disclaimer
 
-Yahoo!, Y!Finance, and Yahoo! Finance are registered trademarks of Yahoo, Inc.
+Yahoo!, Y!Finance, and Yahoo! Finance are registered trademarks of
+Yahoo, Inc.
 
-yfinancer is not affiliated, endorsed, or vetted by Yahoo, Inc. It's an open-source tool that uses Yahoo's publicly available APIs, and is intended for research and educational purposes.
+yfinancer is not affiliated, endorsed, or vetted by Yahoo, Inc. It’s an
+open-source tool that uses Yahoo’s publicly available APIs, and is
+intended for research and educational purposes.
 
-Users should refer to Yahoo!'s terms of use for details on rights to use the actual data downloaded.
+Users should refer to Yahoo!’s terms of use for details on rights to use
+the actual data downloaded.
