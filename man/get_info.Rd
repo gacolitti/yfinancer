@@ -7,7 +7,7 @@
 get_info(
   ticker,
   modules = "summaryProfile",
-  output = c("tibble", "response", "request"),
+  output = c("tibble", "list", "response", "request"),
   proxy = NULL
 )
 }
@@ -16,7 +16,7 @@ get_info(
 
 \item{modules}{A character vector of modules to request from the API}
 
-\item{output}{The output format for the request (tibble, response, request)}
+\item{output}{The output format for the request (tibble, list, response, request)}
 
 \item{proxy}{A character string specifying the proxy URL}
 }

@@ -64,7 +64,7 @@ extract_module_data <- function(result) {
 #'
 #' @param ticker A ticker name or ticker object created with get_tickers).
 #' @param modules A character vector of modules to request from the API
-#' @param output The output format for the request (tibble, response, request)
+#' @param output The output format for the request (tibble, list, response, request)
 #' @param proxy A character string specifying the proxy URL
 #' @return A list with company information
 #'
@@ -75,7 +75,7 @@ extract_module_data <- function(result) {
 #' }
 get_info <- function(ticker,
                      modules = "summaryProfile",
-                     output = c("tibble", "response", "request"),
+                     output = c("tibble", "list", "response", "request"),
                      proxy = NULL) {
   output <- rlang::arg_match(output)
 
@@ -110,6 +110,10 @@ get_info <- function(ticker,
   }
 
   resp_json <- httr2::resp_body_json(resp)
+
+  if (output == "list") {
+    return(resp_json)
+  }
 
   # Return empty list if response is NULL
   if (is.null(resp_json)) {
