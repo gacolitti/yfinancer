@@ -48,7 +48,7 @@ parse_module_data <- function(result_data, module_name) {
     if (!is.null(result_data$balanceSheetStatements)) {
       tbl <- dplyr::tibble(data = result_data$balanceSheetStatements) |> 
              tidyr::unnest_wider("data") |> 
-             process_raw_fmt_columns()
+             process_nested_cols()
       return(tbl)
     }
    # Calendar Events Module 
@@ -74,10 +74,10 @@ parse_module_data <- function(result_data, module_name) {
         if (field %in% names(earnings_data)) {
           field_data <- earnings_data[[field]]
           if (is.list(field_data)) {
-            # Create a temporary tibble to pass to process_raw_fmt_columns
+            # Create a temporary tibble to pass to process_nested_cols
             temp_tbl <- dplyr::tibble(data = list(field_data))
             # Process using the updated function with field as the prefix
-            processed_tbl <- process_raw_fmt_columns(temp_tbl, prefix = field)
+            processed_tbl <- process_nested_cols(temp_tbl, prefix = field)
             # Merge the processed columns into the main tibble
             for (processed_col in setdiff(names(processed_tbl), "data")) {
               tbl[[processed_col]] <- processed_tbl[[processed_col]]
@@ -94,10 +94,10 @@ parse_module_data <- function(result_data, module_name) {
           for (i in 1:min(length(dates), 2)) {
             date_obj <- dates[[i]]
             if (is.list(date_obj)) {
-              # Create a temporary tibble to pass to process_raw_fmt_columns
+              # Create a temporary tibble to pass to process_nested_cols
               temp_tbl <- dplyr::tibble(data = list(date_obj))
               # Process using the updated function with earningsDate and i as the prefix
-              processed_tbl <- process_raw_fmt_columns(temp_tbl, prefix = paste0("earningsDate", i))
+              processed_tbl <- process_nested_cols(temp_tbl, prefix = paste0("earningsDate", i))
               # Merge the processed columns into the main tibble
               for (processed_col in setdiff(names(processed_tbl), "data")) {
                 tbl[[processed_col]] <- processed_tbl[[processed_col]][[1]]
@@ -113,10 +113,10 @@ parse_module_data <- function(result_data, module_name) {
         if (is.list(call_dates) && length(call_dates) > 0) {
           call_date <- call_dates[[1]]
           if (is.list(call_date)) {
-            # Create a temporary tibble to pass to process_raw_fmt_columns
+            # Create a temporary tibble to pass to process_nested_cols
             temp_tbl <- dplyr::tibble(data = list(call_date))
             # Process using the updated function with earningsCallDate as the prefix
-            processed_tbl <- process_raw_fmt_columns(temp_tbl, prefix = "earningsCallDate")
+            processed_tbl <- process_nested_cols(temp_tbl, prefix = "earningsCallDate")
             # Merge the processed columns into the main tibble
             for (processed_col in setdiff(names(processed_tbl), "data")) {
               tbl[[processed_col]] <- processed_tbl[[processed_col]][[1]]
@@ -135,10 +135,10 @@ parse_module_data <- function(result_data, module_name) {
     if ("exDividendDate" %in% names(tbl) && is.list(tbl$exDividendDate)) {
       ex_div <- tbl$exDividendDate[[1]]
       if (is.list(ex_div)) {
-        # Create a temporary tibble to pass to process_raw_fmt_columns
+        # Create a temporary tibble to pass to process_nested_cols
         temp_tbl <- dplyr::tibble(data = list(ex_div))
         # Process using the updated function with exDividendDate as the prefix
-        processed_tbl <- process_raw_fmt_columns(temp_tbl, prefix = "exDividendDate")
+        processed_tbl <- process_nested_cols(temp_tbl, prefix = "exDividendDate")
         # Merge the processed columns into the main tibble
         for (processed_col in setdiff(names(processed_tbl), "data")) {
           tbl[[processed_col]] <- processed_tbl[[processed_col]][[1]]
@@ -152,10 +152,10 @@ parse_module_data <- function(result_data, module_name) {
     if ("dividendDate" %in% names(tbl) && is.list(tbl$dividendDate)) {
       div_date <- tbl$dividendDate[[1]]
       if (is.list(div_date)) {
-        # Create a temporary tibble to pass to process_raw_fmt_columns
+        # Create a temporary tibble to pass to process_nested_cols
         temp_tbl <- dplyr::tibble(data = list(div_date))
         # Process using the updated function with dividendDate as the prefix
-        processed_tbl <- process_raw_fmt_columns(temp_tbl, prefix = "dividendDate")
+        processed_tbl <- process_nested_cols(temp_tbl, prefix = "dividendDate")
         # Merge the processed columns into the main tibble
         for (processed_col in setdiff(names(processed_tbl), "data")) {
           tbl[[processed_col]] <- processed_tbl[[processed_col]][[1]]
@@ -175,7 +175,7 @@ parse_module_data <- function(result_data, module_name) {
       tbl <- dplyr::tibble(data = list(result_data$cashflowStatements)) |> 
       tidyr::unnest_longer("data") |> 
       tidyr::unnest_wider("data") |> 
-      process_raw_fmt_columns()
+      process_nested_cols()
       return(tbl)
     }
   } else if (module_name == "defaultKeyStatistics") {
@@ -183,7 +183,7 @@ parse_module_data <- function(result_data, module_name) {
     if (!is.null(result_data)) {
       tbl <- dplyr::tibble(data = list(result_data)) |> 
       tidyr::unnest_wider("data") |> 
-      process_raw_fmt_columns()
+      process_nested_cols()
       return(tbl)
     }
   } else if (module_name == "earnings") {
@@ -207,7 +207,7 @@ parse_module_data <- function(result_data, module_name) {
         earnings_quarterly <- dplyr::tibble(data = list(quarterly_data)) |> 
           tidyr::unnest_longer(data) |> 
           tidyr::unnest_wider(data) |> 
-          process_raw_fmt_columns()
+          process_nested_cols()
         
         # Store in our results list
         result_tibbles$quarterly_earnings <- earnings_quarterly
@@ -229,7 +229,7 @@ parse_module_data <- function(result_data, module_name) {
         dplyr::mutate(date = paste0(.data$currentQuarterEstimateDate, .data$currentQuarterEstimateYear)) |> 
         dplyr::select(-dplyr::starts_with("currentQuarterEstimate")) |> 
         tidyr::unnest_wider("earningsDate", names_sep = "") |> 
-        process_raw_fmt_columns()
+        process_nested_cols()
       
       # Store in our results list
       result_tibbles$current_quarter_earnings <- current_quarter
@@ -246,7 +246,7 @@ parse_module_data <- function(result_data, module_name) {
         # Create tibble from yearly financials data
         financials_yearly <- dplyr::tibble(data = yearly_data) |> 
           tidyr::unnest_wider(data) |> 
-          process_raw_fmt_columns()
+          process_nested_cols()
         
         # Store in our results list
         result_tibbles$yearly_financials <- financials_yearly
@@ -264,7 +264,7 @@ parse_module_data <- function(result_data, module_name) {
         # Create tibble from quarterly financials data
         financials_quarterly <- dplyr::tibble(data = quarterly_data) |> 
           tidyr::unnest_wider(data) |> 
-          process_raw_fmt_columns()
+          process_nested_cols()
         
         # Store in our results list
         result_tibbles$quarterly_financials <- financials_quarterly
@@ -285,7 +285,7 @@ parse_module_data <- function(result_data, module_name) {
       tidyr::unnest_longer("history") |> 
       dplyr::select(-"maxAge") |> 
       tidyr::unnest_wider("history", names_repair = "minimal") |> 
-      process_raw_fmt_columns()
+      process_nested_cols()
     return(earnings_history)
   } else if (module_name == "earningsTrend") {
     # Process earnings trend data
@@ -296,31 +296,202 @@ parse_module_data <- function(result_data, module_name) {
       tidyr::unnest_wider("trend") |> 
       dplyr::mutate(
         earningsEstimate = purrr::map(.data$earningsEstimate, function(est) {
-          new_names <- tools::toTitleCase(names(est))
+          new_names <- capitalize(names(est))
+          new_names <- gsub("earnings|Earnings", "", new_names)
           stats::setNames(est, new_names)
         }),
         revenueEstimate = purrr::map(.data$revenueEstimate, function(est) {
-          new_names <- tools::toTitleCase(names(est))
+          new_names <- capitalize(names(est))
+          new_names <- gsub("earnings|Earnings", "", new_names)
+          stats::setNames(est, new_names)
+        }),
+        epsTrend = purrr::map(.data$epsTrend, function(est) {
+          new_names <- capitalize(names(est))
+          new_names <- gsub("epsTrend|EpsTrend", "", new_names)
+          stats::setNames(est, new_names)
+        }),
+        epsRevisions = purrr::map(.data$epsRevisions, function(est) {
+          new_names <- capitalize(names(est))
+          new_names <- gsub("epsRevisions|EpsRevisions", "", new_names)
           stats::setNames(est, new_names)
         })
       ) |> 
       tidyr::unnest_wider("earningsEstimate", names_sep = "") |> 
       tidyr::unnest_wider("revenueEstimate", names_sep = "") |> 
-      process_raw_fmt_columns()
+      tidyr::unnest_wider("epsTrend", names_sep = "") |> 
+      tidyr::unnest_wider("epsRevisions", names_sep = "") |> 
+      process_nested_cols()
     return(earnings_trend)
+  } else if (module_name == "esgScores") {
+    # Process ESG scores data
+    esg_scores <- dplyr::tibble(data = list(result_data)) |> 
+      tidyr::unnest_wider("data") |> 
+      process_nested_cols()
+    return(esg_scores)
+  } else if (module_name == "financialData") {
+    # Process financial data
+    financial_data <- dplyr::tibble(data = list(result_data)) |> 
+      tidyr::unnest_wider("data") |> 
+      process_nested_cols()
+    return(financial_data)
+  } else if (module_name == "fundOwnership") {
+    # Process fund ownership data
+    fund_ownership <- dplyr::tibble(data = list(result_data)) |> 
+      tidyr::unnest_wider("data") |> 
+      tidyr::unnest_longer("ownershipList") |> 
+      dplyr::select(-"maxAge") |> 
+      tidyr::unnest_wider("ownershipList") |> 
+      process_nested_cols()
+    return(fund_ownership)
+  } else if (module_name == "fundProfile") {
+    # Process fund profile data
+    fund_profile <- dplyr::tibble(data = list(result_data)) |> 
+      tidyr::unnest_wider("data") |> 
+      tidyr::unnest_wider("feesExpensesInvestment") |> 
+      tidyr::unnest_wider("feesExpensesInvestmentCat", names_repair = "minimal") |> 
+      process_nested_cols()
+    return(fund_profile)
+  } else if (module_name == "futuresChain") {
+    # Process futures chain data
+    futures_chain <- dplyr::tibble(data = list(result_data$futuresChainDetails)) |> 
+      tidyr::unnest_wider("data") |> 
+      tidyr::unnest_longer("data") 
+    return(futures_chain)
+  } else if (module_name == "incomeStatementHistory" || module_name == "incomeStatementHistoryQuarterly") {
+    # Process income statement history data
+    income_statement_history <- dplyr::tibble(data = list(result_data)) |> 
+      tidyr::unnest_wider("data") |> 
+      tidyr::unnest_longer("incomeStatementHistory") |> 
+      dplyr::select(-"maxAge") |> 
+      tidyr::unnest_wider("incomeStatementHistory") |> 
+      process_nested_cols()
+    return(income_statement_history)
+  } else if (module_name == "indexTrend") {
+    # Process index trend data
+    index_trend <- dplyr::tibble(data = list(result_data)) |> 
+      tidyr::unnest_wider("data") |> 
+      tidyr::unnest_longer("estimates") |> 
+      tidyr::unnest_wider("estimates") |> 
+      process_nested_cols()
+    return(index_trend)
+  } else if (module_name == "insiderHolders") {
+    # Process insider holders data
+    insider_holders <- dplyr::tibble(data = list(result_data)) |> 
+      tidyr::unnest_wider("data") |> 
+      tidyr::unnest_longer("holders") |> 
+      dplyr::select(-"maxAge") |> 
+      tidyr::unnest_wider("holders") |> 
+      process_nested_cols()
+    return(insider_holders)
+  } else if (module_name == "insiderTransactions") {
+    # Process insider transactions data
+    insider_transactions <- dplyr::tibble(data = list(result_data)) |> 
+      tidyr::unnest_wider("data") |> 
+      tidyr::unnest_longer("transactions") |> 
+      dplyr::select(-"maxAge") |> 
+      tidyr::unnest_wider("transactions") |> 
+      process_nested_cols()
+    return(insider_transactions)
+  } else if (module_name == "institutionOwnership") {
+    # Process institution ownership data
+    institution_ownership <- dplyr::tibble(data = list(result_data)) |> 
+      tidyr::unnest_wider("data") |> 
+      tidyr::unnest_longer("ownershipList") |> 
+      dplyr::select(-"maxAge") |> 
+      tidyr::unnest_wider("ownershipList") |> 
+      process_nested_cols()
+    return(institution_ownership)
+  } else if (module_name == "majorDirectHolders") {
+    # Process major direct holders data
+    major_direct_holders <- dplyr::tibble(data = list(result_data)) |> 
+      tidyr::unnest_wider("data") |> 
+      process_nested_cols()
+    return(major_direct_holders)
+  } else if (module_name == "majorHoldersBreakdown") {
+    # Process major holders breakdown data
+    major_holders_breakdown <- dplyr::tibble(data = list(result_data)) |> 
+      tidyr::unnest_wider("data") |> 
+      process_nested_cols()
+    return(major_holders_breakdown)
+  } else if (module_name == "netSharePurchaseActivity") {
+    # Process net share purchase activity data
+    net_share_purchase_activity <- dplyr::tibble(data = list(result_data)) |> 
+      tidyr::unnest_wider("data") |> 
+      process_nested_cols()
+    return(net_share_purchase_activity)
+  } else if (module_name == "price") {
+    # Process price data
+    price <- dplyr::tibble(data = list(result_data)) |> 
+      tidyr::unnest_wider("data") |> 
+      process_nested_cols()
+    return(price)
+  } else if (module_name == "quoteType") {
+    # Process quote type data
+    quote_type <- dplyr::tibble(data = list(result_data)) |> 
+      tidyr::unnest_wider("data") |> 
+      process_nested_cols()
+    return(quote_type)
+  } else if (module_name == "recommendationTrend") {
+    # Process recommendation trend data
+    recommendation_trend <- dplyr::tibble(data = list(result_data)) |> 
+      tidyr::unnest_wider("data") |> 
+      tidyr::unnest_longer("trend") |> 
+      tidyr::unnest_wider("trend") 
+    return(recommendation_trend)
+  } else if (module_name == "secFilings") {
+    # Process SEC filings data
+    sec_filings <- dplyr::tibble(data = list(result_data)) |> 
+      tidyr::unnest_wider("data") |> 
+      tidyr::unnest_longer("filings") |> 
+      dplyr::select(-"maxAge") |> 
+      tidyr::unnest_wider("filings") |> 
+      tidyr::unnest_longer("exhibits") |> 
+      dplyr::mutate(exhibits = purrr::map(exhibits, \(ex) {
+        new_names <- capitalize(names(ex))
+        names(ex) <- new_names
+        ex
+      })) |> 
+      tidyr::unnest_wider(exhibits, names_sep = "")
+    return(sec_filings)
+  } else if (module_name == "sectorTrend") {
+    # Process sector trend data
+    sector_trend <- dplyr::tibble(data = list(result_data)) |> 
+      tidyr::unnest_wider("data") |> 
+      process_nested_cols()
+    return(sector_trend)
+  } else if (module_name == "summaryDetail") {
+    # Process summary detail data
+    summary_detail <- dplyr::tibble(data = list(result_data)) |> 
+      tidyr::unnest_wider("data") |> 
+      process_nested_cols()
+    return(summary_detail)
+  } else if (module_name == "summaryProfile") {
+    # Process summary profile data
+    summary_profile <- dplyr::tibble(data = list(result_data)) |> 
+      tidyr::unnest_wider("data") |> 
+      process_nested_cols()
+    return(summary_profile)
+  } else if (module_name == "upgradeDowngradeHistory") {
+    # Process upgrade/downgrade history data
+    upgrade_downgrade_history <- dplyr::tibble(data = list(result_data)) |> 
+      tidyr::unnest_wider("data") |> 
+      tidyr::unnest_longer("history") |> 
+      tidyr::unnest_wider("history") 
+    return(upgrade_downgrade_history)
   }
-
   # Return empty tibble if no valid data found
   return(dplyr::tibble())
 }
 
-#' Parse format/raw/longFmt pairs in a tibble
+#' Parse nested column structures in a tibble
 #'
-#' @param tibble A tibble potentially containing format/raw/longFmt pairs
-#' @param prefix Optional prefix for the created columns. If NULL, uses the column name followed by 'Raw', 'Fmt', or 'LongFmt'
-#' @return A processed tibble with format/raw/longFmt pairs appropriately handled
+#' @param tibble A tibble potentially containing nested column structures like format/raw/longFmt pairs
+#'               or min/avg/max values
+#' @param prefix Optional prefix for the created columns. If NULL, uses the column name followed by 
+#'               the appropriate suffix (Raw, Fmt, LongFmt, Min, Avg, Max)
+#' @return A processed tibble with nested structures appropriately unnested
 #' @keywords internal
-process_raw_fmt_columns <- function(tibble, prefix = NULL) {
+process_nested_cols <- function(tibble, prefix = NULL) {
   if (nrow(tibble) == 0 || ncol(tibble) == 0) {
     return(tibble)
   }
@@ -328,36 +499,55 @@ process_raw_fmt_columns <- function(tibble, prefix = NULL) {
   # Check each column
   for (col in names(tibble)) {
     if (is.list(tibble[[col]])) {
-      # Check if this column contains raw/fmt/longFmt structures
-      is_raw_fmt <- FALSE
+      # Check if this column contains nested structures
+      is_nested <- FALSE
       if (length(tibble[[col]]) > 0) {
         first_non_null <- purrr::detect(tibble[[col]], function(x) !is.null(x))
         if (!is.null(first_non_null) && is.list(first_non_null) && 
-            any(c("raw", "fmt", "longFmt") %in% names(first_non_null))) {
-          is_raw_fmt <- TRUE
+            (any(c("raw", "fmt", "longFmt") %in% names(first_non_null)) ||
+             any(c("min", "avg", "max") %in% names(first_non_null)))) {
+          is_nested <- TRUE
         }
       }
       
-      if (is_raw_fmt) {
+      if (is_nested) {
         # Determine the column name prefix
         col_prefix <- if (is.null(prefix)) col else prefix
         
         # Extract raw values
         if (any(purrr::map_lgl(tibble[[col]], function(x) !is.null(x) && "raw" %in% names(x)))) {
-          raw_values <- purrr::map_dbl(tibble[[col]], ~if(is.null(.x) || !"raw" %in% names(.x)) NA_real_ else .x$raw)
+          raw_values <- purrr::map_dbl(tibble[[col]], ~if(is.null(.x$raw) || !"raw" %in% names(.x)) NA_real_ else .x$raw)
           tibble[[paste0(col_prefix, "Raw")]] <- raw_values
         }
         
         # Extract fmt values
         if (any(purrr::map_lgl(tibble[[col]], function(x) !is.null(x) && "fmt" %in% names(x)))) {
-          fmt_values <- purrr::map_chr(tibble[[col]], ~if(is.null(.x) || !"fmt" %in% names(.x)) NA_character_ else .x$fmt)
+          fmt_values <- purrr::map_chr(tibble[[col]], ~if(is.null(.x$fmt) || !"fmt" %in% names(.x)) NA_character_ else .x$fmt)
           tibble[[paste0(col_prefix, "Fmt")]] <- fmt_values
         }
         
         # Extract longFmt values
         if (any(purrr::map_lgl(tibble[[col]], function(x) !is.null(x) && "longFmt" %in% names(x)))) {
-          longfmt_values <- purrr::map_chr(tibble[[col]], ~if(is.null(.x) || !"longFmt" %in% names(.x)) NA_character_ else .x$longFmt)
+          longfmt_values <- purrr::map_chr(tibble[[col]], ~if(is.null(.x$longFmt) || !"longFmt" %in% names(.x)) NA_character_ else .x$longFmt)
           tibble[[paste0(col_prefix, "LongFmt")]] <- longfmt_values
+        }
+        
+        # Extract min values
+        if (any(purrr::map_lgl(tibble[[col]], function(x) !is.null(x) && "min" %in% names(x)))) {
+          min_values <- purrr::map_dbl(tibble[[col]], ~if(is.null(.x$min) || !"min" %in% names(.x)) NA_real_ else .x$min)
+          tibble[[paste0(col_prefix, "Min")]] <- min_values
+        }
+        
+        # Extract avg values
+        if (any(purrr::map_lgl(tibble[[col]], function(x) !is.null(x) && "avg" %in% names(x)))) {
+          avg_values <- purrr::map_dbl(tibble[[col]], ~if(is.null(.x$avg) || !"avg" %in% names(.x)) NA_real_ else .x$avg)
+          tibble[[paste0(col_prefix, "Avg")]] <- avg_values
+        }
+        
+        # Extract max values
+        if (any(purrr::map_lgl(tibble[[col]], function(x) !is.null(x) && "max" %in% names(x)))) {
+          max_values <- purrr::map_dbl(tibble[[col]], ~if(is.null(.x$max) || !"max" %in% names(.x)) NA_real_ else .x$max)
+          tibble[[paste0(col_prefix, "Max")]] <- max_values
         }
         
         # Remove original column

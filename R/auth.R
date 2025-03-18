@@ -98,7 +98,7 @@ read_auth_file <- function(path = NULL, refresh = FALSE) {
   # Check if the file is complete if it exists
   if (!is.null(json)) {
     if (all(c("a1_cookie", "crumb") %in% names(json))) {
-      should_message("Using existing authentication file.", path = path)
+      should_message("Using existing authentication file.", path = dirname(path))
       return(json)
     }
   }
@@ -135,7 +135,7 @@ req_add_auth <- function(req, proxy = NULL, refresh = FALSE, path = NULL) {
   
   # If both environment variables are available, use them
   if (!is.na(env_crumb) && !is.na(env_a1)) {
-    should_message("Using environment variables for authentication.")
+    should_message("Using environment variables for authentication.", path = dirname(path))
     return(req |>
       httr2::req_url_query("crumb" = env_crumb) |>
       httr2::req_headers("Cookie" = paste0("A1=", env_a1)))

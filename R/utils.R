@@ -138,3 +138,12 @@ process_timestamp_arg <- function(timestamp = NULL, default = NULL) {
 `%||%` <- function(x, y) {
   if (is.null(x)) y else x
 }
+
+#' Capitalize first letter of string
+#' @param x String to capitalize
+#' @return String with first letter capitalized
+#' @keywords internal
+capitalize <- function(x) {
+  substr(x, 1, 1) <- toupper(substr(x, 1, 1))
+  x
+}

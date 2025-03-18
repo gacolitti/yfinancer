@@ -21,14 +21,22 @@ get_info(
 \item{proxy}{A character string specifying the proxy URL}
 }
 \value{
-A list with company information
+A tibble, list, response, or request object containing the requested information.
+If multiple modules are requested, returns a list of tibbles. Some individual modules
+may return a list of tibbles even when output is set to "tibble" because the underlying
+data contains multiple datasets.
 }
 \description{
 Get basic information about a ticker
 }
 \examples{
 \dontrun{
+# Get a single module
 apple <- get_tickers("AAPL")
-apple_info <- get_info(apple)
+apple_profile <- get_info(apple, modules = "assetProfile")
+
+# Get multiple modules as a list of tibbles
+apple_financials <- get_info(apple, 
+                             modules = c("incomeStatementHistory", "balanceSheetHistory"))
 }
 }
