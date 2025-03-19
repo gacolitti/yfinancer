@@ -36,7 +36,8 @@ apple <- get_tickers("AAPL")
 apple_profile <- get_info(apple, modules = "assetProfile")
 
 # Get multiple modules as a list of tibbles
-apple_financials <- get_info(apple, 
-                             modules = c("incomeStatementHistory", "balanceSheetHistory"))
+apple_financials <- get_info(apple,
+  modules = c("incomeStatementHistory", "balanceSheetHistory")
+)
 }
 }

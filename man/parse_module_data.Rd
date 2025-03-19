@@ -2,7 +2,7 @@
 % Please edit documentation in R/info.R
 \name{parse_module_data}
 \alias{parse_module_data}
-\title{Info.R - Module for retrieving and parsing Yahoo Finance quoteSummary data}
+\title{Parse a module's data into a tidy tibble format}
 \usage{
 parse_module_data(result_data, module_name)
 }
@@ -15,8 +15,6 @@ parse_module_data(result_data, module_name)
 A tibble with parsed data
 }
 \description{
-This file contains functions for parsing Yahoo Finance quoteSummary API data
-into tidy tibble formats using tidyverse functions to handle nested data.
 Parse a module's data into a tidy tibble format
 }
 \keyword{internal}

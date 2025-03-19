@@ -132,18 +132,20 @@ req_add_auth <- function(req, proxy = NULL, refresh = FALSE, path = NULL) {
   # First check for environment variables
   env_crumb <- Sys.getenv("YFINANCE_CRUMB", NA_character_)
   env_a1 <- Sys.getenv("YFINANCE_A1", NA_character_)
-  
+
   # If both environment variables are available, use them
   if (!is.na(env_crumb) && !is.na(env_a1)) {
     should_message("Using environment variables for authentication.", path = dirname(path))
-    return(req |>
-      httr2::req_url_query("crumb" = env_crumb) |>
-      httr2::req_headers("Cookie" = paste0("A1=", env_a1)))
+    return(
+      req |>
+        httr2::req_url_query("crumb" = env_crumb) |>
+        httr2::req_headers("Cookie" = paste0("A1=", env_a1))
+    )
   }
-  
+
   # Otherwise, check for A1 and crumb in ~/.yfinance/auth
   auth <- read_auth_file(path, refresh)
-  
+
   # Add cookies to the request
   req |>
     httr2::req_url_query("crumb" = auth$crumb) |>
