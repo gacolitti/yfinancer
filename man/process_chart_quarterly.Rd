@@ -2,7 +2,7 @@
 % Please edit documentation in R/info.R
 \name{process_chart_quarterly}
 \alias{process_chart_quarterly}
-\title{Parse earnings module data}
+\title{Process quarterly data from earnings or financials chart}
 \usage{
 process_chart_quarterly(
   chart_data,
@@ -19,23 +19,11 @@ process_chart_quarterly(
 \item{result_name}{The name to use in the result tibbles list}
 
 \item{result_tibbles}{The list of result tibbles to update}
-
-\item{result_data}{The data to parse}
 }
 \value{
-A list of tibbles with parsed data
-
 Updated result_tibbles list with processed data
 }
 \description{
-Parse earnings module data
+Process quarterly data from earnings or financials chart
 }
-\keyword{Process}
-\keyword{chart}
-\keyword{data}
-\keyword{earnings}
-\keyword{financials}
-\keyword{from}
 \keyword{internal}
-\keyword{or}
-\keyword{quarterly}

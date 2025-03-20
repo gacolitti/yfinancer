@@ -14,8 +14,8 @@ test_that("get_info returns data for valid ticker", {
   expected_fields <- c(
     "address1", "city", "state", "zip", "country", "phone", "website",
     "industry", "industryKey", "industryDisp", "sector", "sectorKey",
-    "sectorDisp", "longBusinessSummary", "fullTimeEmployees", "irWebsite",
-    "maxAge"
+    "sectorDisp", "longBusinessSummary", "fullTimeEmployees", "companyOfficers",
+    "irWebsite", "executiveTeam", "maxAge"
   )
   expect_named(info, expected_fields)
 })

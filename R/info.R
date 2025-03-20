@@ -11,14 +11,14 @@
 #' @keywords internal
 parse_asset_profile <- function(result_data) {
   tbl <- dplyr::tibble(data = list(result_data)) |>
-    tidyr::unnest_wider(data)
+    tidyr::unnest_wider("data")
 
   # If company officers exist, extract them as an attribute
   if ("companyOfficers" %in% names(tbl)) {
     officers_data <- tbl$companyOfficers
     if (!is.null(officers_data) && length(officers_data) > 0) {
       officers_tibble <- dplyr::tibble(data = officers_data[[1]]) |>
-        tidyr::unnest_wider(data)
+        tidyr::unnest_wider("data")
 
       # Attempt to unnest any raw/fmt structures
       officer_cols <- names(officers_tibble)
@@ -32,7 +32,7 @@ parse_asset_profile <- function(result_data) {
       tbl$companyOfficers <- list(officers_tibble)
     }
   }
-  return(tbl)
+  tbl
 }
 
 #' Parse balance sheet module data
@@ -44,9 +44,10 @@ parse_balance_sheet <- function(result_data) {
     tbl <- dplyr::tibble(data = result_data$balanceSheetStatements) |>
       tidyr::unnest_wider("data") |>
       process_nested_cols()
-    return(tbl)
+  } else {
+    tbl <- dplyr::tibble()
   }
-  return(dplyr::tibble())
+  tbl
 }
 
 #' Parse cash flow statement module data
@@ -59,9 +60,10 @@ parse_cashflow_statement <- function(result_data) {
       tidyr::unnest_longer("data") |>
       tidyr::unnest_wider("data") |>
       process_nested_cols()
-    return(tbl)
+  } else {
+    tbl <- dplyr::tibble()
   }
-  return(dplyr::tibble())
+  tbl
 }
 
 #' Parse default key statistics module data
@@ -73,9 +75,10 @@ parse_default_key_statistics <- function(result_data) {
     tbl <- dplyr::tibble(data = list(result_data)) |>
       tidyr::unnest_wider("data") |>
       process_nested_cols()
-    return(tbl)
+  } else {
+    tbl <- dplyr::tibble()
   }
-  return(dplyr::tibble())
+  tbl
 }
 
 #' Process a nested field and add it to the tibble
@@ -111,7 +114,7 @@ process_calendar_field <- function(tbl, field_data, prefix, is_array = FALSE,
     }
   }
 
-  return(tbl)
+  tbl
 }
 
 #' Process earnings data in calendar events
@@ -158,7 +161,7 @@ process_calendar_earnings <- function(tbl, earnings_data) {
     tbl$isEarningsDateEstimate <- earnings_data$isEarningsDateEstimate[[1]]
   }
 
-  return(tbl)
+  tbl
 }
 
 #' Parse calendar events module data
@@ -169,7 +172,7 @@ process_calendar_earnings <- function(tbl, earnings_data) {
 parse_calendar_events <- function(result_data) {
   # Start with the base tibble from the result data
   tbl <- dplyr::tibble(data = list(result_data)) |>
-    tidyr::unnest_wider(data)
+    tidyr::unnest_wider("data")
 
   # Add maxAge if it exists
   if ("maxAge" %in% names(tbl)) {
@@ -204,13 +207,9 @@ parse_calendar_events <- function(result_data) {
   # Remove original earnings column since we've flattened its contents
   tbl$earnings <- NULL
 
-  return(tbl)
+  tbl
 }
 
-#' Parse earnings module data
-#' @param result_data The data to parse
-#' @return A list of tibbles with parsed data
-#' @keywords internal
 #' Process quarterly data from earnings or financials chart
 #'
 #' @param chart_data The chart data containing quarterly information
@@ -230,15 +229,15 @@ process_chart_quarterly <- function(chart_data, field_name, result_name,
 
       # Apply appropriate unnesting based on data structure
       quarterly_tbl <- quarterly_tbl |>
-        tidyr::unnest_longer(data) |>
-        tidyr::unnest_wider(data)
+        tidyr::unnest_longer("data") |>
+        tidyr::unnest_wider("data")
 
       # Process nested columns and store in results list
       result_tibbles[[result_name]] <- quarterly_tbl |> process_nested_cols()
     }
   }
 
-  return(result_tibbles)
+  result_tibbles
 }
 
 #' Process current quarter estimate data
@@ -271,7 +270,7 @@ process_current_quarter <- function(earnings_chart, result_tibbles = list()) {
     result_tibbles$current_quarter_earnings <- current_quarter
   }
 
-  return(result_tibbles)
+  result_tibbles
 }
 
 #' Process metadata from earnings data
@@ -288,7 +287,7 @@ process_earnings_metadata <- function(base_tbl, result_tibbles = list()) {
     )
   }
 
-  return(result_tibbles)
+  result_tibbles
 }
 
 #' Parse earnings module data
@@ -336,7 +335,7 @@ parse_earnings <- function(result_data) {
   result_tibbles <- process_earnings_metadata(base_tbl, result_tibbles)
 
   # Return the list of tibbles
-  return(result_tibbles)
+  result_tibbles
 }
 
 #' Parse earnings history module data
@@ -350,7 +349,7 @@ parse_earnings_history <- function(result_data) {
     dplyr::select(-"maxAge") |>
     tidyr::unnest_wider("history", names_repair = "minimal") |>
     process_nested_cols()
-  return(earnings_history)
+  earnings_history
 }
 
 #' Parse earnings trend module data
@@ -390,7 +389,7 @@ parse_earnings_trend <- function(result_data) {
     tidyr::unnest_wider("epsTrend", names_sep = "") |>
     tidyr::unnest_wider("epsRevisions", names_sep = "") |>
     process_nested_cols()
-  return(earnings_trend)
+  earnings_trend
 }
 
 #' Parse ESG scores module data
@@ -401,7 +400,7 @@ parse_esg_scores <- function(result_data) {
   esg_scores <- dplyr::tibble(data = list(result_data)) |>
     tidyr::unnest_wider("data") |>
     process_nested_cols()
-  return(esg_scores)
+  esg_scores
 }
 
 #' Parse fund profile module data
@@ -414,7 +413,7 @@ parse_fund_profile <- function(result_data) {
     tidyr::unnest_wider("feesExpensesInvestment") |>
     tidyr::unnest_wider("feesExpensesInvestmentCat", names_repair = "minimal") |>
     process_nested_cols()
-  return(fund_profile)
+  fund_profile
 }
 
 #' Parse futures chain module data
@@ -425,7 +424,7 @@ parse_futures_chain <- function(result_data) {
   futures_chain <- dplyr::tibble(data = list(result_data$futuresChainDetails)) |>
     tidyr::unnest_wider("data") |>
     tidyr::unnest_longer("data")
-  return(futures_chain)
+  futures_chain
 }
 
 #' Parse index trend module data
@@ -438,7 +437,7 @@ parse_index_trend <- function(result_data) {
     tidyr::unnest_longer("estimates") |>
     tidyr::unnest_wider("estimates") |>
     process_nested_cols()
-  return(index_trend)
+  index_trend
 }
 
 #' Parse insider holders module data
@@ -482,7 +481,7 @@ parse_recommendation_trend <- function(result_data) {
     tidyr::unnest_wider("data") |>
     tidyr::unnest_longer("trend") |>
     tidyr::unnest_wider("trend")
-  return(recommendation_trend)
+  recommendation_trend
 }
 
 #' Parse upgrade downgrade history module data
@@ -494,7 +493,7 @@ parse_up_down_history <- function(result_data) {
     tidyr::unnest_wider("data") |>
     tidyr::unnest_longer("history") |>
     tidyr::unnest_wider("history")
-  return(up_down_history)
+  up_down_history
 }
 
 #' Parse income statement module data
@@ -508,7 +507,7 @@ parse_income_statement <- function(result_data) {
     dplyr::select(-"maxAge") |>
     tidyr::unnest_wider("incomeStatementHistory") |>
     process_nested_cols()
-  return(income_statement_history)
+  income_statement_history
 }
 
 #' Parse ownership data module
@@ -523,7 +522,7 @@ parse_ownership_data <- function(result_data, list_field = "ownershipList") {
     dplyr::select(-"maxAge") |>
     tidyr::unnest_wider(list_field) |>
     process_nested_cols()
-  return(ownership_data)
+  ownership_data
 }
 
 #' Parse SEC filings module data
@@ -537,13 +536,13 @@ parse_sec_filings <- function(result_data) {
     dplyr::select(-"maxAge") |>
     tidyr::unnest_wider("filings") |>
     tidyr::unnest_longer("exhibits") |>
-    dplyr::mutate(exhibits = purrr::map(exhibits, \(ex) {
+    dplyr::mutate(exhibits = purrr::map(.data$exhibits, \(ex) {
       new_names <- capitalize(names(ex))
       names(ex) <- new_names
       ex
     })) |>
-    tidyr::unnest_wider(exhibits, names_sep = "")
-  return(sec_filings)
+    tidyr::unnest_wider("exhibits", names_sep = "")
+  sec_filings
 }
 
 #' Parse generic module data that requires simple unnesting
@@ -559,7 +558,7 @@ parse_generic_module <- function(result_data) {
     tidyr::unnest_wider("data") |>
     process_nested_cols()
 
-  return(tbl)
+  tbl
 }
 
 #' Parse a module's data into a tidy tibble format
@@ -617,17 +616,8 @@ parse_module_data <- function(result_data, module_name) {
   }
 
   # Call the handler with the result data
-  return(handler_fn(result_data))
+  handler_fn(result_data)
 }
-
-#' Parse nested column structures in a tibble
-#'
-#' @param tibble A tibble potentially containing nested column structures like
-#'               format/raw/longFmt pairs or min/avg/max values
-#' @param prefix Optional prefix for the created columns. If NULL, uses the column name
-#'               followed by the appropriate suffix (Raw, Fmt, LongFmt, Min, Avg, Max)
-#' @return A processed tibble with nested structures appropriately unnested
-#' @keywords internal
 
 #' Extract a specific field from nested structures
 #'
@@ -659,7 +649,7 @@ extract_nested_field <- function(col_data, field_name,
       }
     )
   }
-  return(values)
+  values
 }
 
 #' Check if a column contains nested structures with specific fields
@@ -682,7 +672,7 @@ has_nested_structure <- function(col_data) {
   has_fmt_pattern <- any(c("raw", "fmt", "longFmt") %in% names(first_non_null))
   has_stat_pattern <- any(c("min", "avg", "max") %in% names(first_non_null))
 
-  return(has_fmt_pattern || has_stat_pattern)
+  has_fmt_pattern || has_stat_pattern
 }
 
 #' Process a single nested column
@@ -753,9 +743,17 @@ process_nested_column <- function(tibble, col, col_prefix) {
   }
   # Remove original column
   tibble[[col]] <- NULL
-  return(tibble)
+  tibble
 }
 
+#' Process nested columns in a tibble
+#'
+#' @param tibble A tibble potentially containing nested column structures like
+#'               format/raw/longFmt pairs or min/avg/max values
+#' @param prefix Optional prefix for the created columns. If NULL, uses the column name
+#'               followed by the appropriate suffix (Raw, Fmt, LongFmt, Min, Avg, Max)
+#' @return A processed tibble with nested structures appropriately unnested
+#' @keywords internal
 process_nested_cols <- function(tibble, prefix = NULL) {
   if (nrow(tibble) == 0 || ncol(tibble) == 0) {
     return(tibble)
@@ -774,7 +772,7 @@ process_nested_cols <- function(tibble, prefix = NULL) {
     }
   }
 
-  return(tibble)
+  tibble
 }
 
 #' Get basic information about a ticker

@@ -2,7 +2,7 @@
 % Please edit documentation in R/info.R
 \name{extract_nested_field}
 \alias{extract_nested_field}
-\title{Parse nested column structures in a tibble}
+\title{Extract a specific field from nested structures}
 \usage{
 extract_nested_field(col_data, field_name, is_numeric = TRUE)
 }
@@ -12,26 +12,11 @@ extract_nested_field(col_data, field_name, is_numeric = TRUE)
 \item{field_name}{Field name to extract}
 
 \item{is_numeric}{Whether the field is numeric}
-
-\item{tibble}{A tibble potentially containing nested column structures like
-format/raw/longFmt pairs or min/avg/max values}
-
-\item{prefix}{Optional prefix for the created columns. If NULL, uses the column name
-followed by the appropriate suffix (Raw, Fmt, LongFmt, Min, Avg, Max)}
 }
 \value{
-A processed tibble with nested structures appropriately unnested
-
 Vector of extracted values
 }
 \description{
-Parse nested column structures in a tibble
+Extract a specific field from nested structures
 }
-\keyword{Extract}
-\keyword{a}
-\keyword{field}
-\keyword{from}
 \keyword{internal}
-\keyword{nested}
-\keyword{specific}
-\keyword{structures}
