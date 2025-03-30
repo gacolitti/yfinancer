@@ -24,7 +24,7 @@ get_a1_cookie <- function() {
 
   # Extract the A1 token
   a1_token <- gsub(".*set-cookie: A1=([^;]+).*", "\\1", a1_lines[1], ignore.case = TRUE)
-  return(a1_token)
+  a1_token
 }
 
 #' Get crumb using A1 cookie
@@ -56,11 +56,11 @@ get_crumb <- function(a1_cookie, proxy = NULL) {
     {
       resp_crumb <- req_crumb |> httr2::req_perform()
       crumb <- httr2::resp_body_string(resp_crumb)
-      return(crumb)
+      crumb
     },
     error = function(e) {
       warning(sprintf("Failed to get crumb: %s", e$message))
-      return(NULL)
+      NULL
     }
   )
 }
@@ -91,7 +91,7 @@ read_auth_file <- function(path = NULL, refresh = FALSE) {
       jsonlite::fromJSON(path)
     },
     error = function(e) {
-      return(NULL)
+      NULL
     }
   )
 
@@ -99,7 +99,7 @@ read_auth_file <- function(path = NULL, refresh = FALSE) {
   if (!is.null(json)) {
     if (all(c("a1_cookie", "crumb") %in% names(json))) {
       should_message("Using existing authentication file.", path = dirname(path))
-      return(json)
+      json
     }
   }
 
@@ -113,7 +113,7 @@ read_auth_file <- function(path = NULL, refresh = FALSE) {
   message("Creating authentication file at ", path)
   dir.create(dirname(path), showWarnings = FALSE, recursive = TRUE)
   jsonlite::write_json(auth_data, path)
-  return(auth_data)
+  auth_data
 }
 
 #' Get Yahoo Finance authentication (crumb)
@@ -135,7 +135,10 @@ req_add_auth <- function(req, proxy = NULL, refresh = FALSE, path = NULL) {
 
   # If both environment variables are available, use them
   if (!is.na(env_crumb) && !is.na(env_a1)) {
-    should_message("Using environment variables for authentication.", path = dirname(path))
+    should_message(
+      "Using environment variables for authentication.",
+      path = if (is.null(path)) NULL else dirname(path)
+    )
     return(
       req |>
         httr2::req_url_query("crumb" = env_crumb) |>
