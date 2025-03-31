@@ -66,7 +66,7 @@ parse_ticker_symbols <- function(symbols) {
     toupper(stringr::str_trim(symbol))
   })
 
-  return(symbols)
+  symbols
 }
 
 #' Extract validation results from Yahoo Finance API response
@@ -111,7 +111,7 @@ extract_validation_results <- function(parsed_response, original_symbols) {
     }
   }
 
-  return(result)
+  result
 }
 
 #' Check if a variable is a logical value
@@ -124,7 +124,7 @@ check_is_lgl <- function(x) {
   if (!is.logical(x)) {
     rlang::abort(glue::glue("`{x_name}` must be a logical value"))
   }
-  return(x)
+  x
 }
 
 #' Validate date period
@@ -139,7 +139,7 @@ validate_period <- function(period) {
     rlang::abort(sprintf("Invalid period. Must be one of: %s", paste(valid_periods, collapse = ", ")))
   }
 
-  return(period)
+  period
 }
 
 #' Validate date interval
@@ -154,7 +154,7 @@ validate_interval <- function(interval) {
     rlang::abort(sprintf("Invalid interval. Must be one of: %s", paste(valid_intervals, collapse = ", ")))
   }
 
-  return(interval)
+  interval
 }
 
 validate_frequency <- function(frequency) {
@@ -164,5 +164,5 @@ validate_frequency <- function(frequency) {
     rlang::abort(sprintf("Invalid frequency. Must be one of: %s", paste(valid_frequencies, collapse = ", ")))
   }
 
-  return(frequency)
+  frequency
 }
