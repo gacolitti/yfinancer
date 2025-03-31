@@ -1,9 +1,8 @@
-#' Convert Unix timestamp to date
-#'
+#' Convert Unix timestamp to datetime
 #' @param timestamp Unix timestamp in seconds (can be a vector)
-#' @return A Date object or vector of Date objects
+#' @return A POSIXct object or vector of POSIXct objects
 #' @keywords internal
-unix_to_date <- function(timestamp) {
+unix_to_datetime <- function(timestamp) {
   if (is.null(timestamp)) {
     return(NA)
   }
@@ -21,27 +20,22 @@ unix_to_date <- function(timestamp) {
   lubridate::as_datetime(as.numeric(timestamp))
 }
 
-#' Format date for API requests
+#' Convert Date or POSIXct to Unix timestamp
 #'
-#' @param date Date object or string in YYYY-MM-DD format
+#' @param x Date object, POSIXct object, or string in YYYY-MM-DD HH:MM:SS format
+#' @param default Default value to return if x is NULL
 #' @return Unix timestamp in seconds
 #' @keywords internal
-format_date <- function(date) {
-  if (is.null(date)) {
-    return(NULL)
+as_timestamp <- function(x, default = NULL) {
+  if (is.null(x)) {
+    return(default)
   }
 
-  if (inherits(date, "Date") || inherits(date, "POSIXt")) {
-    return(as.integer(as.numeric(date)))
+  datetime <- suppressWarnings(lubridate::as_datetime(x))
+  if (is.na(datetime)) {
+    rlang::abort("Invalid timestamp format. Please provide a unix timestamp, a Date object, or a YYYY-MM-DD HH:MM:SS string.")
   }
-
-  # If string, convert to Date then to timestamp
-  if (is.character(date)) {
-    date <- as.Date(date)
-    return(as.integer(as.numeric(date)))
-  }
-
-  rlang::abort("Invalid date format. Please provide a Date object or YYYY-MM-DD string.")
+  as.integer(datetime)
 }
 
 #' Clean table or vector of names

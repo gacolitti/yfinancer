@@ -7,9 +7,9 @@
 get_financials(
   ticker,
   freq = "annual",
-  start_timestamp = NULL,
-  end_timestamp = NULL,
-  cash_flow_keys = NULL,
+  start = NULL,
+  end = NULL,
+  cashflow_keys = NULL,
   balance_keys = NULL,
   income_keys = NULL,
   pretty = TRUE,
@@ -23,15 +23,15 @@ get_financials(
 
 \item{freq}{Frequency of data: "annual" or "quarterly" (default "annual")}
 
-\item{start_timestamp}{Start timestamp for data}
+\item{start}{Start timestamp (default EOY 2016)}
 
-\item{end_timestamp}{End timestamp for data}
+\item{end}{End timestamp (default current timestamp)}
 
-\item{cash_flow_keys}{Cash flow statement keys (default all)}
+\item{cashflow_keys}{Vector of cash flow statement keys (default all)}
 
-\item{balance_keys}{Balance sheet keys (default all)}
+\item{balance_keys}{Balance sheet keys to retrieve (default all)}
 
-\item{income_keys}{Income statement keys (default all)}
+\item{income_keys}{Vector of income statement keys (default all)}
 
 \item{pretty}{Format column names to be more readable (default TRUE)}
 

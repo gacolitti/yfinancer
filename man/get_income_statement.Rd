@@ -7,8 +7,8 @@
 get_income_statement(
   ticker,
   freq = c("annual", "quarterly"),
-  start_timestamp = NULL,
-  end_timestamp = NULL,
+  start = NULL,
+  end = NULL,
   income_keys = NULL,
   pretty = TRUE,
   wide = TRUE,
@@ -21,9 +21,9 @@ get_income_statement(
 
 \item{freq}{Frequency of data: "annual" or "quarterly" (default "annual")}
 
-\item{start_timestamp}{Start timestamp (default EOY 2016)}
+\item{start}{Start timestamp (default EOY 2016)}
 
-\item{end_timestamp}{End timestamp (default current timestamp)}
+\item{end}{End timestamp (default current timestamp)}
 
 \item{income_keys}{Vector of income statement keys (default all)}
 

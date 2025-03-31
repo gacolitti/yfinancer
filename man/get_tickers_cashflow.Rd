@@ -7,8 +7,8 @@
 get_tickers_cashflow(
   tickers_obj,
   freq = c("annual", "quarterly"),
-  start_timestamp = NULL,
-  end_timestamp = NULL,
+  start = NULL,
+  end = NULL,
   cashflow_keys = NULL,
   pretty = TRUE,
   wide = TRUE,
@@ -21,9 +21,9 @@ get_tickers_cashflow(
 
 \item{freq}{Frequency of data: "annual" or "quarterly" (default "annual")}
 
-\item{start_timestamp}{Start timestamp (default EOY 2016)}
+\item{start}{Start timestamp (default EOY 2016)}
 
-\item{end_timestamp}{End timestamp (default current timestamp)}
+\item{end}{End timestamp (default current timestamp)}
 
 \item{cashflow_keys}{Vector of cash flow statement keys (default all)}
 

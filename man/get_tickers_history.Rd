@@ -8,8 +8,8 @@ get_tickers_history(
   tickers_obj,
   period = "1mo",
   interval = "1d",
-  start_date = NULL,
-  end_date = NULL,
+  start = NULL,
+  end = NULL,
   prepost = FALSE,
   auto_adjust = TRUE,
   back_adjust = TRUE,
@@ -21,13 +21,15 @@ get_tickers_history(
 \arguments{
 \item{tickers_obj}{A tickers object created with get_tickers()}
 
-\item{period}{The period to download data for (default "1mo")}
+\item{period}{The period to download data for (default "1mo").
+Valid values are "1d", "5d", "1mo", "3mo", "6mo", "1y", "2y", "5y", "10y", "ytd", "max". Ignored if \code{start} and \code{end} are provided.}
 
-\item{interval}{The interval between data points (default "1d")}
+\item{interval}{The interval between data points (default "1d").
+Valid values are "1m", "2m", "5m", "15m", "30m", "60m", "90m", "1h", "1d", "5d", "1wk", "1mo", "3mo".}
 
-\item{start_date}{Start date for custom date range (format: "YYYY-MM-DD")}
+\item{start}{Start time for query expressed as a date, datetime, or string in YYYY-MM-DD HH:MM:SS format.}
 
-\item{end_date}{End date for custom date range (format: "YYYY-MM-DD")}
+\item{end}{End time for query expressed as a date, datetime, or string in YYYY-MM-DD HH:MM:SS format.}
 
 \item{prepost}{Include pre and post market data (default FALSE)}
 

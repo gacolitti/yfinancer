@@ -7,8 +7,8 @@
 get_cashflow(
   ticker,
   freq = c("annual", "quarterly"),
-  start_timestamp = NULL,
-  end_timestamp = NULL,
+  start = NULL,
+  end = NULL,
   cashflow_keys = NULL,
   pretty = TRUE,
   wide = TRUE,
@@ -21,9 +21,9 @@ get_cashflow(
 
 \item{freq}{Frequency of data: "annual" or "quarterly" (default "annual")}
 
-\item{start_timestamp}{Start timestamp (default EOY 2016)}
+\item{start}{Start timestamp (default EOY 2016)}
 
-\item{end_timestamp}{End timestamp (default current timestamp)}
+\item{end}{End timestamp (default current timestamp)}
 
 \item{cashflow_keys}{Vector of cash flow statement keys (default all)}
 
@@ -47,9 +47,9 @@ Get cash flow statement for a ticker
 apple <- get_tickers("AAPL")
 
 # Get annual cash flow statement
-cash_flow <- get_cash_flow(apple)
+cash_flow <- get_cashflow(apple)
 
 # Get quarterly cash flow statement
-quarterly_cash_flow <- get_cash_flow(apple, freq = "quarterly")
+quarterly_cash_flow <- get_cashflow(apple, freq = "quarterly")
 }
 }

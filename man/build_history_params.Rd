@@ -4,7 +4,7 @@
 \alias{build_history_params}
 \title{Build request parameters for history API}
 \usage{
-build_history_params(interval, prepost, period, start_date, end_date)
+build_history_params(interval, prepost, period, start, end)
 }
 \description{
 Build request parameters for history API

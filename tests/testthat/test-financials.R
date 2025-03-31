@@ -24,7 +24,7 @@ test_that("get_income_statement returns data for a valid ticker", {
   # Test timestamp parameters
   start_ts <- as.integer(as.POSIXct("2020-01-01"))
   end_ts <- as.integer(as.POSIXct("2022-12-31"))
-  dated_income <- get_income_statement(ticker_obj, start_timestamp = start_ts, end_timestamp = end_ts)
+  dated_income <- get_income_statement(ticker_obj, start = start_ts, end = end_ts)
   expect_true(tibble::is_tibble(dated_income))
   expect_true(all(as.Date(dated_income$date) >= as.Date("2020-01-01")))
   expect_true(all(as.Date(dated_income$date) <= as.Date("2022-12-31")))
@@ -62,7 +62,7 @@ test_that("get_balance_sheet returns data for a valid ticker", {
   # Test timestamp parameters
   start_ts <- as.integer(as.POSIXct("2020-01-01"))
   end_ts <- as.integer(as.POSIXct("2022-12-31"))
-  dated_balance <- get_balance_sheet(ticker_obj, start_timestamp = start_ts, end_timestamp = end_ts)
+  dated_balance <- get_balance_sheet(ticker_obj, start = start_ts, end = end_ts)
   expect_true(tibble::is_tibble(dated_balance))
   expect_true(all(as.Date(dated_balance$date) >= as.Date("2020-01-01")))
   expect_true(all(as.Date(dated_balance$date) <= as.Date("2022-12-31")))
@@ -100,7 +100,7 @@ test_that("get_cashflow returns data for a valid ticker", {
   # Test timestamp parameters
   start_ts <- as.integer(as.POSIXct("2020-01-01"))
   end_ts <- as.integer(as.POSIXct("2022-12-31"))
-  dated_cashflow <- get_cashflow(ticker_obj, start_timestamp = start_ts, end_timestamp = end_ts)
+  dated_cashflow <- get_cashflow(ticker_obj, start = start_ts, end = end_ts)
   expect_true(tibble::is_tibble(dated_cashflow))
   expect_true(all(as.Date(dated_cashflow$date) >= as.Date("2020-01-01")))
   expect_true(all(as.Date(dated_cashflow$date) <= as.Date("2022-12-31")))
@@ -140,7 +140,7 @@ test_that("get_financials returns all statements", {
   # Test timestamp parameters
   start_ts <- as.integer(as.POSIXct("2020-01-01"))
   end_ts <- as.integer(as.POSIXct("2022-12-31"))
-  dated_financials <- get_financials(ticker_obj, start_timestamp = start_ts, end_timestamp = end_ts)
+  dated_financials <- get_financials(ticker_obj, start = start_ts, end = end_ts)
   expect_true(is.list(dated_financials))
   expect_true(all(sapply(dated_financials, function(x) {
     all(as.Date(x$date) >= as.Date("2020-01-01")) &&
@@ -192,9 +192,9 @@ test_that("Financial statements validate input parameters", {
   expect_error(get_financials(ticker_obj, output = "invalid"), expected_error)
 
   # Test invalid timestamp parameters
-  expected_error <- "Invalid timestamp format. Please provide a unix timestamp, a Date object, or a YYYY-MM-DD string."
-  expect_error(get_income_statement(ticker_obj, start_timestamp = "invalid"), expected_error)
-  expect_error(get_balance_sheet(ticker_obj, end_timestamp = "invalid"), expected_error)
+  expected_error <- "Invalid timestamp format. Please provide a unix timestamp, a Date object, or a YYYY-MM-DD HH:MM:SS string."
+  expect_error(get_income_statement(ticker_obj, start = "invalid"), expected_error)
+  expect_error(get_balance_sheet(ticker_obj, end = "invalid"), expected_error)
 
   # Test invalid pretty parameter
   expect_error(get_income_statement(ticker_obj, pretty = "yes"))

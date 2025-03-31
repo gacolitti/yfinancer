@@ -47,8 +47,8 @@ history_hourly <- get_history(apple, period = "1mo", interval = "1h")
 # Get data for a custom date range
 history_custom <- get_history(
   apple, 
-  start_date = "2022-01-01", 
-  end_date = "2022-12-31"
+  start = "2022-01-01", 
+  end = "2022-12-31"
 )
 
 # Get company information
@@ -144,9 +144,9 @@ main components:
     - ✅ Financial statements (income statement, balance sheet, cash
       flow)
     - ✅ Dividends and stock splits
-    - ⬜ Options data
-    - ⬜ Analyst recommendations and price targets
-    - ⬜ News
+    - ✅ Options data
+    - ✅ Analyst recommendations and price targets
+    - ✅ News
 2.  **Market Information**:
     - ✅ Company profile and asset information
     - ✅ Key statistics (PE, EPS, EBITDA, enterprise value, etc.)

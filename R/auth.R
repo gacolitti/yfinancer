@@ -99,7 +99,7 @@ read_auth_file <- function(path = NULL, refresh = FALSE) {
   if (!is.null(json)) {
     if (all(c("a1_cookie", "crumb") %in% names(json))) {
       should_message("Using existing authentication file.", path = dirname(path))
-      json
+      return(json)
     }
   }
 

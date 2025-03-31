@@ -139,7 +139,7 @@ search_tickers <- function(
         title = item$title %||% NA_character_,
         publisher = item$publisher %||% NA_character_,
         link = item$link %||% NA_character_,
-        publish_time = unix_to_date(item$providerPublishTime %||% NA_integer_),
+        publish_time = unix_to_datetime(item$providerPublishTime %||% NA_integer_),
         type = "news"
       )
     })

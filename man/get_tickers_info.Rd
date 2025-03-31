@@ -14,11 +14,11 @@ get_tickers_info(
 \arguments{
 \item{tickers_obj}{A tickers object created with get_tickers()}
 
-\item{modules}{Modules to retrieve information for (default "summaryProfile")}
+\item{modules}{A character vector of modules to request from the API}
 
-\item{output}{Object to return. Can be "tibble", "response", or "request" (default "tibble")}
+\item{output}{The output format for the request (tibble, list, response, request)}
 
-\item{proxy}{Optional proxy settings}
+\item{proxy}{A character string specifying the proxy URL}
 }
 \value{
 A list of information for each ticker

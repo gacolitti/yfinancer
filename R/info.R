@@ -25,7 +25,7 @@ parse_asset_profile <- function(result_data) {
       for (col in officer_cols) {
         if (is.list(officers_tibble[[col]]) && all(purrr::map_lgl(officers_tibble[[col]], is.list))) {
           officers_tibble <- officers_tibble |>
-            tidyr::unnest_wider(col, names_sep = "")
+            tidyr::unnest_wider(dplyr::all_of(col), names_sep = "")
         }
       }
 
@@ -346,7 +346,7 @@ parse_earnings_history <- function(result_data) {
   earnings_history <- dplyr::tibble(data = list(result_data)) |>
     tidyr::unnest_wider("data") |>
     tidyr::unnest_longer("history") |>
-    dplyr::select(-"maxAge") |>
+    dplyr::select(-dplyr::any_of("maxAge")) |>
     tidyr::unnest_wider("history", names_repair = "minimal") |>
     process_nested_cols()
   earnings_history
@@ -360,7 +360,7 @@ parse_earnings_trend <- function(result_data) {
   earnings_trend <- dplyr::tibble(data = list(result_data)) |>
     tidyr::unnest_wider("data") |>
     tidyr::unnest_longer("trend") |>
-    dplyr::select(-"maxAge") |>
+    dplyr::select(-dplyr::any_of("maxAge")) |>
     tidyr::unnest_wider("trend") |>
     dplyr::mutate(
       earningsEstimate = purrr::map(.data$earningsEstimate, function(est) {
@@ -504,7 +504,7 @@ parse_income_statement <- function(result_data) {
   income_statement_history <- dplyr::tibble(data = list(result_data)) |>
     tidyr::unnest_wider("data") |>
     tidyr::unnest_longer("incomeStatementHistory") |>
-    dplyr::select(-"maxAge") |>
+    dplyr::select(-dplyr::any_of("maxAge")) |>
     tidyr::unnest_wider("incomeStatementHistory") |>
     process_nested_cols()
   income_statement_history
@@ -519,7 +519,7 @@ parse_ownership_data <- function(result_data, list_field = "ownershipList") {
   ownership_data <- dplyr::tibble(data = list(result_data)) |>
     tidyr::unnest_wider("data") |>
     tidyr::unnest_longer(list_field) |>
-    dplyr::select(-"maxAge") |>
+    dplyr::select(-dplyr::any_of("maxAge")) |>
     tidyr::unnest_wider(list_field) |>
     process_nested_cols()
   ownership_data
@@ -533,7 +533,7 @@ parse_sec_filings <- function(result_data) {
   sec_filings <- dplyr::tibble(data = list(result_data)) |>
     tidyr::unnest_wider("data") |>
     tidyr::unnest_longer("filings") |>
-    dplyr::select(-"maxAge") |>
+    dplyr::select(-dplyr::any_of("maxAge")) |>
     tidyr::unnest_wider("filings") |>
     tidyr::unnest_longer("exhibits") |>
     dplyr::mutate(exhibits = purrr::map(.data$exhibits, \(ex) {
