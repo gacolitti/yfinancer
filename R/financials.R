@@ -2,8 +2,8 @@
 #'
 #' @param ticker A ticker object created with get_tickers) or a ticker symbol
 #' @param freq Frequency of data: "annual" or "quarterly" (default "annual")
-#' @param start_timestamp Start timestamp (default EOY 2016)
-#' @param end_timestamp End timestamp (default current timestamp)
+#' @param start Start timestamp (default EOY 2016)
+#' @param end End timestamp (default current timestamp)
 #' @param income_keys Vector of income statement keys (default all)
 #' @param pretty Format column names to be more readable (default TRUE)
 #' @param wide Return data in wide format (default TRUE)
@@ -24,7 +24,7 @@
 #' }
 #' @export
 get_income_statement <- function(ticker, freq = c("annual", "quarterly"),
-                                 start_timestamp = NULL, end_timestamp = NULL,
+                                 start = NULL, end = NULL,
                                  income_keys = NULL, pretty = TRUE, wide = TRUE, proxy = NULL, output = c("tibble", "response", "request")) {
   output <- rlang::arg_match(output)
   freq <- rlang::arg_match(freq)
@@ -39,9 +39,9 @@ get_income_statement <- function(ticker, freq = c("annual", "quarterly"),
   }
 
   # Get current timestamp for period2
-  end_timestamp <- process_timestamp_arg(end_timestamp, default = as.integer(Sys.time()))
+  end <- as_timestamp(end, default = as.integer(Sys.time()))
   # Start from end of 2016
-  start_timestamp <- process_timestamp_arg(start_timestamp, default = as.integer(as.POSIXct("2016-12-31")))
+  start <- as_timestamp(start, default = as.integer(as.POSIXct("2016-12-31")))
 
   # Income statement keys
   if (is.null(income_keys)) {
@@ -57,8 +57,8 @@ get_income_statement <- function(ticker, freq = c("annual", "quarterly"),
     httr2::req_url_query(
       symbol = ticker$symbol,
       type = type_param,
-      period1 = start_timestamp,
-      period2 = end_timestamp
+      period1 = start,
+      period2 = end
     ) |>
     httr2::req_proxy(proxy) |>
     req_add_headers()
@@ -94,15 +94,8 @@ get_income_statement <- function(ticker, freq = c("annual", "quarterly"),
 
 #' Get balance sheet for a ticker
 #'
-#' @param ticker A ticker object created with get_tickers) or a ticker symbol
-#' @param freq Frequency of data: "annual" or "quarterly" (default "annual")
-#' @param start_timestamp Start timestamp (default EOY 2016)
-#' @param end_timestamp End timestamp (default current timestamp)
+#' @inheritParams get_income_statement
 #' @param balance_keys Balance sheet keys to retrieve (default all)
-#' @param pretty Format column names to be more readable (default TRUE)
-#' @param wide Return data in wide format (default TRUE)
-#' @param proxy Optional proxy settings
-#' @param output Object to return. Can be "tibble", "response", or "request" (default "tibble")
 #' @return Either a tibble with balance sheet data, an httr2 response object, or an httr2 request object
 #'   depending on the value of the output argument.
 #'
@@ -118,7 +111,7 @@ get_income_statement <- function(ticker, freq = c("annual", "quarterly"),
 #' }
 #' @export
 get_balance_sheet <- function(ticker, freq = c("annual", "quarterly"),
-                              start_timestamp = NULL, end_timestamp = NULL, balance_keys = NULL,
+                              start = NULL, end = NULL, balance_keys = NULL,
                               pretty = TRUE, wide = TRUE, proxy = NULL, output = c("tibble", "response", "request")) {
   output <- rlang::arg_match(output)
   freq <- rlang::arg_match(freq)
@@ -134,9 +127,9 @@ get_balance_sheet <- function(ticker, freq = c("annual", "quarterly"),
   }
 
   # Get current timestamp for period2
-  end_timestamp <- process_timestamp_arg(end_timestamp, default = as.integer(Sys.time()))
+  end <- as_timestamp(end, default = as.integer(Sys.time()))
   # Start from end of 2016 as in Python implementation
-  start_timestamp <- process_timestamp_arg(start_timestamp, default = as.integer(as.POSIXct("2016-12-31")))
+  start <- as_timestamp(start, default = as.integer(as.POSIXct("2016-12-31")))
 
   # Balance sheet keys
   if (is.null(balance_keys)) {
@@ -152,8 +145,8 @@ get_balance_sheet <- function(ticker, freq = c("annual", "quarterly"),
     httr2::req_url_query(
       symbol = ticker$symbol,
       type = type_param,
-      period1 = start_timestamp,
-      period2 = end_timestamp
+      period1 = start,
+      period2 = end
     ) |>
     httr2::req_proxy(proxy) |>
     req_add_headers()
@@ -173,8 +166,7 @@ get_balance_sheet <- function(ticker, freq = c("annual", "quarterly"),
   resp_json <- httr2::resp_body_json(resp)
 
   # Check if we have valid data
-  if (is.null(resp_json$timeseries) || is.null(resp_json$timeseries$result) ||
-    length(resp_json$timeseries$result) == 0) {
+  if (is.null(resp_json$timeseries) || is.null(resp_json$timeseries$result) || length(resp_json$timeseries$result) == 0) {
     warning(sprintf("No balance sheet data available for %s", ticker$symbol))
     return(tibble::tibble())
   }
@@ -189,16 +181,8 @@ get_balance_sheet <- function(ticker, freq = c("annual", "quarterly"),
 }
 
 #' Get cash flow statement for a ticker
-#'
-#' @param ticker A ticker object created with get_tickers) or a ticker symbol
-#' @param freq Frequency of data: "annual" or "quarterly" (default "annual")
-#' @param start_timestamp Start timestamp (default EOY 2016)
-#' @param end_timestamp End timestamp (default current timestamp)
+#' @inheritParams get_income_statement
 #' @param cashflow_keys Vector of cash flow statement keys (default all)
-#' @param pretty Format column names to be more readable (default TRUE)
-#' @param wide Return data in wide format (default TRUE)
-#' @param proxy Optional proxy settings
-#' @param output Object to return. Can be "tibble", "response", or "request" (default "tibble")
 #' @return Either a tibble with cash flow statement data, an httr2 response object, or an httr2 request object
 #'   depending on the value of the output argument.
 #'
@@ -207,14 +191,14 @@ get_balance_sheet <- function(ticker, freq = c("annual", "quarterly"),
 #' apple <- get_tickers("AAPL")
 #'
 #' # Get annual cash flow statement
-#' cash_flow <- get_cash_flow(apple)
+#' cash_flow <- get_cashflow(apple)
 #'
 #' # Get quarterly cash flow statement
-#' quarterly_cash_flow <- get_cash_flow(apple, freq = "quarterly")
+#' quarterly_cash_flow <- get_cashflow(apple, freq = "quarterly")
 #' }
 #' @export
 get_cashflow <- function(ticker, freq = c("annual", "quarterly"),
-                         start_timestamp = NULL, end_timestamp = NULL, cashflow_keys = NULL,
+                         start = NULL, end = NULL, cashflow_keys = NULL,
                          pretty = TRUE, wide = TRUE, proxy = NULL, output = c("tibble", "response", "request")) {
   output <- rlang::arg_match(output)
   freq <- rlang::arg_match(freq)
@@ -231,9 +215,9 @@ get_cashflow <- function(ticker, freq = c("annual", "quarterly"),
   freq <- validate_frequency(freq)
 
   # Get current timestamp for period2
-  end_timestamp <- process_timestamp_arg(end_timestamp)
+  end <- as_timestamp(end, default = as.integer(Sys.time()))
   # Start from end of 2016 as in Python implementation
-  start_timestamp <- process_timestamp_arg(start_timestamp, default = as.integer(as.POSIXct("2016-12-31")))
+  start <- as_timestamp(start, default = as.integer(as.POSIXct("2016-12-31")))
 
   # Cash flow keys
   if (is.null(cashflow_keys)) {
@@ -249,8 +233,8 @@ get_cashflow <- function(ticker, freq = c("annual", "quarterly"),
     httr2::req_url_query(
       symbol = ticker$symbol,
       type = type_param,
-      period1 = start_timestamp,
-      period2 = end_timestamp
+      period1 = start,
+      period2 = end
     ) |>
     httr2::req_proxy(proxy) |>
     req_add_headers()
@@ -270,8 +254,7 @@ get_cashflow <- function(ticker, freq = c("annual", "quarterly"),
   resp_json <- httr2::resp_body_json(resp)
 
   # Check if we have valid data
-  if (is.null(resp_json$timeseries) || is.null(resp_json$timeseries$result) ||
-    length(resp_json$timeseries$result) == 0) {
+  if (is.null(resp_json$timeseries) || is.null(resp_json$timeseries$result) || length(resp_json$timeseries$result) == 0) {
     warning(sprintf("No cash flow data available for %s", ticker$symbol))
     return(tibble::tibble())
   }
@@ -282,14 +265,13 @@ get_cashflow <- function(ticker, freq = c("annual", "quarterly"),
   # Process the timeseries data
   processed_data <- process_timeseries_data(result_data, pretty)
 
-  return(processed_data)
+  processed_data
 }
 
 #' Process timeseries data from the fundamentals-timeseries endpoint
 #'
+#' @inheritParams get_income_statement
 #' @param result_data List of timeseries results
-#' @param pretty Format column names to be more readable (default TRUE)
-#' @param wide Return data in wide format (default TRUE)
 #' @return A tidy tibble with processed timeseries data
 #' @keywords internal
 process_timeseries_data <- function(result_data, pretty = TRUE, wide = TRUE) {
@@ -367,25 +349,16 @@ process_timeseries_data <- function(result_data, pretty = TRUE, wide = TRUE) {
     result_tbl <- tidyr::pivot_wider(result_tbl, names_from = "metric", values_from = "value")
   }
 
-  return(result_tbl)
+  result_tbl
 }
 
 #' Get all financial statements for a ticker
 #'
-#' @param ticker A ticker object created with get_tickers) or a ticker symbol
-#' @param freq Frequency of data: "annual" or "quarterly" (default "annual")
-#' @param start_timestamp Start timestamp for data
-#' @param end_timestamp End timestamp for data
-#' @param cash_flow_keys Cash flow statement keys (default all)
-#' @param balance_keys Balance sheet keys (default all)
-#' @param income_keys Income statement keys (default all)
-#' @param pretty Format column names to be more readable (default TRUE)
-#' @param wide Return data in wide format (default TRUE)
-#' @param proxy Optional proxy settings
-#' @param output Object to return. Can be "tibble", "response", or "request" (default "tibble")
+#' @inheritParams get_income_statement
+#' @inheritParams get_balance_sheet
+#' @inheritParams get_cashflow
 #' @return A list containing income statement, balance sheet, and cash flow statement,
 #'   or if output is "request" or "response", a list of httr2 request or response objects
-#'
 #'
 #' @examples
 #' \dontrun{
@@ -399,8 +372,8 @@ process_timeseries_data <- function(result_data, pretty = TRUE, wide = TRUE) {
 #' }
 #' @export
 get_financials <- function(ticker, freq = "annual",
-                           start_timestamp = NULL, end_timestamp = NULL,
-                           cash_flow_keys = NULL, balance_keys = NULL,
+                           start = NULL, end = NULL,
+                           cashflow_keys = NULL, balance_keys = NULL,
                            income_keys = NULL, pretty = TRUE, wide = TRUE,
                            proxy = NULL, output = c("tibble", "response", "request")) {
   output <- rlang::arg_match(output)
@@ -410,9 +383,9 @@ get_financials <- function(ticker, freq = "annual",
   }
 
   # Get all three financial statements
-  income_stmt <- get_income_statement(ticker, freq, start_timestamp, end_timestamp, income_keys, pretty, wide, proxy, output)
-  balance_sheet <- get_balance_sheet(ticker, freq, start_timestamp, end_timestamp, balance_keys, pretty, wide, proxy, output)
-  cashflow <- get_cashflow(ticker, freq, start_timestamp, end_timestamp, cash_flow_keys, pretty, wide, proxy, output)
+  income_stmt <- get_income_statement(ticker, freq, start, end, income_keys, pretty, wide, proxy, output)
+  balance_sheet <- get_balance_sheet(ticker, freq, start, end, balance_keys, pretty, wide, proxy, output)
+  cashflow <- get_cashflow(ticker, freq, start, end, cashflow_keys, pretty, wide, proxy, output)
 
   # Return as a list
   list(

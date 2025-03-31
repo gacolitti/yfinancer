@@ -1,7 +1,7 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-# yfinancer <a href="github.com/gacolitti/yfinancer"><img src="man/figures/logo.png" align="right" height="138" /></a>
+# yfinancer <a href="github.com/gacolitti/yfinancer"><img src="man/figures/logo.png" align="right" height="160" /></a>
 
 `yfinancer` provides access to Yahoo Finance’s API for retrieving market
 data. The package includes functions for downloading historical price
@@ -47,8 +47,8 @@ history_hourly <- get_history(apple, period = "1mo", interval = "1h")
 # Get data for a custom date range
 history_custom <- get_history(
   apple, 
-  start_date = "2022-01-01", 
-  end_date = "2022-12-31"
+  start = "2022-01-01", 
+  end = "2022-12-31"
 )
 
 # Get company information
@@ -135,8 +135,7 @@ Currently, only the `get_info()` function requires authentication.
 
 ## Core Features and Components
 
-Based on the Python yfinance package, the R port includes the following
-main components:
+`yfinancer` provides access to the following information:
 
 1.  **Ticker Functions**: Access single ticker data
     - ✅ Historical market data (OHLCV)
@@ -144,9 +143,9 @@ main components:
     - ✅ Financial statements (income statement, balance sheet, cash
       flow)
     - ✅ Dividends and stock splits
-    - ⬜ Options data
-    - ⬜ Analyst recommendations and price targets
-    - ⬜ News
+    - ✅ Options data
+    - ✅ Analyst recommendations and price targets
+    - ✅ News
 2.  **Market Information**:
     - ✅ Company profile and asset information
     - ✅ Key statistics (PE, EPS, EBITDA, enterprise value, etc.)

@@ -1,6 +1,6 @@
 #' Build request parameters for history API
 #' @keywords internal
-build_history_params <- function(interval, prepost, period, start_date, end_date) {
+build_history_params <- function(interval, prepost, period, start, end) {
   # Parameters for API request
   params <- list(
     interval = interval,
@@ -9,14 +9,14 @@ build_history_params <- function(interval, prepost, period, start_date, end_date
   )
 
   # Use either period or start/end dates
-  if (!is.null(start_date) && !is.null(end_date)) {
-    params$period1 <- format_date(start_date)
-    params$period2 <- format_date(end_date)
+  if (!is.null(start) && !is.null(end)) {
+    params$period1 <- as_timestamp(start)
+    params$period2 <- as_timestamp(end)
   } else {
     params$range <- period
   }
 
-  return(params)
+  params
 }
 
 #' Extract and validate chart data from response
@@ -36,7 +36,7 @@ extract_chart_data <- function(resp_json) {
     return(NULL)
   }
 
-  return(chart_result)
+  chart_result
 }
 
 #' Create historical data frame from chart result
@@ -48,10 +48,10 @@ create_historical_df <- function(chart_result) {
   # Create data frame from historical data
   tibble::tibble(
     timestamp = lubridate::as_datetime(timestamps),
-    date = unix_to_date(timestamps),
-    open = quote$open,
-    high = quote$high,
-    low = quote$low,
+    date = as.Date(unix_to_datetime(timestamps)),
+    open = unlist(quote$open),
+    high = unlist(quote$high),
+    low = unlist(quote$low),
     close = unlist(quote$close),
     volume = unlist(quote$volume)
   )
@@ -87,7 +87,7 @@ apply_adjustments <- function(data, chart_result, auto_adjust, back_adjust) {
   data$low <- as.numeric(data$low) * ratio
   data$close <- data$adjusted_close
 
-  return(data)
+  data
 }
 
 #' Add dividends and splits to data frame
@@ -107,7 +107,7 @@ add_events <- function(data, chart_result) {
 
     div_df <- tibble::tibble(
       timestamp = div_timestamps,
-      date = unix_to_date(div_timestamps),
+      date = unix_to_datetime(div_timestamps),
       dividend = div_amounts
     )
 
@@ -126,7 +126,7 @@ add_events <- function(data, chart_result) {
 
     split_df <- tibble::tibble(
       timestamp = split_timestamps,
-      date = unix_to_date(split_timestamps),
+      date = unix_to_datetime(split_timestamps),
       split = split_ratios
     )
 
@@ -137,7 +137,7 @@ add_events <- function(data, chart_result) {
     )
   }
 
-  return(data)
+  data
 }
 
 #' Repair missing data in time series
@@ -154,16 +154,18 @@ repair_data <- function(data, repair = TRUE) {
     data <- tidyr::fill(data, dplyr::all_of(cols_to_fill), .direction = "down")
   }
 
-  return(data)
+  data
 }
 
 #' Get historical market data for a ticker
 #'
-#' @param ticker A ticker name or ticker object created with get_tickers).
-#' @param period The period to download data for (default "1mo")
-#' @param interval The interval between data points (default "1d")
-#' @param start_date Start date for custom date range (format: "YYYY-MM-DD")
-#' @param end_date End date for custom date range (format: "YYYY-MM-DD")
+#' @param ticker A ticker name or ticker object created with `get_tickers()`.
+#' @param period The period to download data for (default "1mo").
+#'   Valid values are "1d", "5d", "1mo", "3mo", "6mo", "1y", "2y", "5y", "10y", "ytd", "max". Ignored if `start` and `end` are provided.
+#' @param interval The interval between data points (default "1d").
+#'   Valid values are "1m", "2m", "5m", "15m", "30m", "60m", "90m", "1h", "1d", "5d", "1wk", "1mo", "3mo".
+#' @param start Start time for query expressed as a date, datetime, or string in YYYY-MM-DD HH:MM:SS format.
+#' @param end End time for query expressed as a date, datetime, or string in YYYY-MM-DD HH:MM:SS format.
 #' @param prepost Include pre and post market data (default FALSE)
 #' @param auto_adjust Adjust all OHLC automatically (default TRUE)
 #' @param back_adjust Adjust data to reflect splits and dividends (default TRUE)
@@ -183,15 +185,15 @@ repair_data <- function(data, repair = TRUE) {
 #' # Get custom date range
 #' apple_history_custom <- get_history(
 #'   apple,
-#'   start_date = "2022-01-01",
-#'   end_date = "2022-12-31"
+#'   start = "2022-01-01",
+#'   end = "2022-12-31"
 #' )
 #' }
 get_history <- function(ticker,
                         period = "1mo",
                         interval = "1d",
-                        start_date = NULL,
-                        end_date = NULL,
+                        start = NULL,
+                        end = NULL,
                         prepost = FALSE,
                         auto_adjust = TRUE,
                         back_adjust = TRUE,
@@ -207,7 +209,7 @@ get_history <- function(ticker,
   interval <- validate_interval(interval)
 
   # Build request parameters
-  params <- build_history_params(interval, prepost, period, start_date, end_date)
+  params <- build_history_params(interval, prepost, period, start, end)
 
   # Create request with query parameters
   req <- httr2::request(yf_base_url) |>
@@ -244,5 +246,5 @@ get_history <- function(ticker,
     # Return data sorted by date
     dplyr::arrange(date)
 
-  return(data)
+  data
 }
