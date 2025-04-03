@@ -12,26 +12,26 @@ test_that("get_income_statement returns data for a valid ticker", {
 
   # Test default parameters
   income_stmt <- get_income_statement(ticker_obj)
-  expect_true(tibble::is_tibble(income_stmt))
+  expect_s3_class(income_stmt, "tbl_df")
   expect_gt(nrow(income_stmt), 0)
   expect_true("date" %in% names(income_stmt))
 
   # Test quarterly data
   quarterly_income <- get_income_statement(ticker_obj, freq = "quarterly")
-  expect_true(tibble::is_tibble(quarterly_income))
+  expect_s3_class(quarterly_income, "tbl_df")
   expect_gt(nrow(quarterly_income), 0)
 
   # Test timestamp parameters
   start_ts <- as.integer(as.POSIXct("2020-01-01"))
   end_ts <- as.integer(as.POSIXct("2022-12-31"))
   dated_income <- get_income_statement(ticker_obj, start = start_ts, end = end_ts)
-  expect_true(tibble::is_tibble(dated_income))
+  expect_s3_class(dated_income, "tbl_df")
   expect_true(all(as.Date(dated_income$date) >= as.Date("2020-01-01")))
   expect_true(all(as.Date(dated_income$date) <= as.Date("2022-12-31")))
 
   # Test pretty parameter
   raw_income <- get_income_statement(ticker_obj, pretty = FALSE)
-  expect_true(tibble::is_tibble(raw_income))
+  expect_s3_class(raw_income, "tbl_df")
   expect_gt(nrow(raw_income), 0)
 
   # Test output parameter
@@ -50,26 +50,26 @@ test_that("get_balance_sheet returns data for a valid ticker", {
 
   # Test default parameters
   balance_sheet <- get_balance_sheet(ticker_obj)
-  expect_true(tibble::is_tibble(balance_sheet))
+  expect_s3_class(balance_sheet, "tbl_df")
   expect_gt(nrow(balance_sheet), 0)
   expect_true("date" %in% names(balance_sheet))
 
   # Test quarterly data
   quarterly_balance <- get_balance_sheet(ticker_obj, freq = "quarterly")
-  expect_true(tibble::is_tibble(quarterly_balance))
+  expect_s3_class(quarterly_balance, "tbl_df")
   expect_gt(nrow(quarterly_balance), 0)
 
   # Test timestamp parameters
   start_ts <- as.integer(as.POSIXct("2020-01-01"))
   end_ts <- as.integer(as.POSIXct("2022-12-31"))
   dated_balance <- get_balance_sheet(ticker_obj, start = start_ts, end = end_ts)
-  expect_true(tibble::is_tibble(dated_balance))
+  expect_s3_class(dated_balance, "tbl_df")
   expect_true(all(as.Date(dated_balance$date) >= as.Date("2020-01-01")))
   expect_true(all(as.Date(dated_balance$date) <= as.Date("2022-12-31")))
 
   # Test pretty parameter
   raw_balance <- get_balance_sheet(ticker_obj, pretty = FALSE)
-  expect_true(tibble::is_tibble(raw_balance))
+  expect_s3_class(raw_balance, "tbl_df")
   expect_gt(nrow(raw_balance), 0)
 
   # Test output parameter
@@ -88,26 +88,26 @@ test_that("get_cashflow returns data for a valid ticker", {
 
   # Test default parameters
   cashflow <- get_cashflow(ticker_obj)
-  expect_true(tibble::is_tibble(cashflow))
+  expect_s3_class(cashflow, "tbl_df")
   expect_gt(nrow(cashflow), 0)
   expect_true("date" %in% names(cashflow))
 
   # Test quarterly data
   quarterly_cashflow <- get_cashflow(ticker_obj, freq = "quarterly")
-  expect_true(tibble::is_tibble(quarterly_cashflow))
+  expect_s3_class(quarterly_cashflow, "tbl_df")
   expect_gt(nrow(quarterly_cashflow), 0)
 
   # Test timestamp parameters
   start_ts <- as.integer(as.POSIXct("2020-01-01"))
   end_ts <- as.integer(as.POSIXct("2022-12-31"))
   dated_cashflow <- get_cashflow(ticker_obj, start = start_ts, end = end_ts)
-  expect_true(tibble::is_tibble(dated_cashflow))
+  expect_s3_class(dated_cashflow, "tbl_df")
   expect_true(all(as.Date(dated_cashflow$date) >= as.Date("2020-01-01")))
   expect_true(all(as.Date(dated_cashflow$date) <= as.Date("2022-12-31")))
 
   # Test pretty parameter
   raw_cashflow <- get_cashflow(ticker_obj, pretty = FALSE)
-  expect_true(tibble::is_tibble(raw_cashflow))
+  expect_s3_class(raw_cashflow, "tbl_df")
   expect_gt(nrow(raw_cashflow), 0)
 
   # Test output parameter
@@ -126,22 +126,22 @@ test_that("get_financials returns all statements", {
 
   # Test default parameters
   financials <- get_financials(ticker_obj)
-  expect_true(is.list(financials))
+  expect_type(financials, "list")
   expect_named(financials, c("income_statement", "balance_sheet", "cashflow"))
-  expect_true(all(sapply(financials, tibble::is_tibble)))
+  expect_true(all(sapply(financials, inherits, "tbl_df")))
   expect_true(all(sapply(financials, function(x) nrow(x) > 0)))
 
   # Test quarterly data
   quarterly_financials <- get_financials(ticker_obj, freq = "quarterly")
-  expect_true(is.list(quarterly_financials))
+  expect_type(quarterly_financials, "list")
   expect_named(quarterly_financials, c("income_statement", "balance_sheet", "cashflow"))
-  expect_true(all(sapply(quarterly_financials, tibble::is_tibble)))
+  expect_true(all(sapply(quarterly_financials, inherits, "tbl_df")))
 
   # Test timestamp parameters
   start_ts <- as.integer(as.POSIXct("2020-01-01"))
   end_ts <- as.integer(as.POSIXct("2022-12-31"))
   dated_financials <- get_financials(ticker_obj, start = start_ts, end = end_ts)
-  expect_true(is.list(dated_financials))
+  expect_type(dated_financials, "list")
   expect_true(all(sapply(dated_financials, function(x) {
     all(as.Date(x$date) >= as.Date("2020-01-01")) &&
       all(as.Date(x$date) <= as.Date("2022-12-31"))
@@ -149,16 +149,17 @@ test_that("get_financials returns all statements", {
 
   # Test pretty parameter
   raw_financials <- get_financials(ticker_obj, pretty = FALSE)
-  expect_true(is.list(raw_financials))
-  expect_true(all(sapply(raw_financials, tibble::is_tibble)))
+  expect_type(raw_financials, "list")
+
+  expect_true(all(sapply(raw_financials, inherits, "tbl_df")))
 
   # Test output parameter
   req_financials <- get_financials(ticker_obj, output = "request")
-  expect_true(is.list(req_financials))
+  expect_type(req_financials, "list")
   expect_true(all(sapply(req_financials, function(x) inherits(x, "httr2_request"))))
 
   resp_financials <- get_financials(ticker_obj, output = "response")
-  expect_true(is.list(resp_financials))
+  expect_type(resp_financials, "list")
   expect_true(all(sapply(resp_financials, function(x) inherits(x, "httr2_response"))))
 })
 

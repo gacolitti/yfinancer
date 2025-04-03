@@ -14,7 +14,7 @@ and returns results in tidy tibble format.
 [![R-CMD-check](https://github.com/gacolitti/yfinancer/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/gacolitti/yfinancer/actions/workflows/R-CMD-check.yaml)
 [![Codecov test
 coverage](https://codecov.io/gh/gacolitti/yfinancer/graph/badge.svg)](https://app.codecov.io/gh/gacolitti/yfinancer)
-[![experimental](https://img.shields.io/badge/experimental-orange.svg)](https://github.com/gaclitti/yfinancer)
+[![experimental](https://img.shields.io/badge/experimental-orange.svg)](https://github.com/gacolitti/yfinancer)
 <!-- badges: end -->
 
 ## Installation

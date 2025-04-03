@@ -47,7 +47,10 @@ Valid values are "1m", "2m", "5m", "15m", "30m", "60m", "90m", "1h", "1d", "5d",
 A list of tibbles with historical market data for each ticker
 }
 \description{
-Get historical data for multiple tickers
+Retrieves historical market data from Yahoo Finance for multiple specified ticker symbols.
+}
+\details{
+See \code{get_history} for more details on the historical market data.
 }
 \examples{
 \dontrun{

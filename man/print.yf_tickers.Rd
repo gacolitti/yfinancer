@@ -17,4 +17,3 @@ The tickers object (invisibly)
 \description{
 Format tickers object print output
 }
-\keyword{internal}

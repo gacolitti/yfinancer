@@ -24,7 +24,6 @@ Imports:
     jsonlite,
     purrr,
     dplyr,
-    tibble,
     lubridate,
     rlang,
     stringr,

@@ -11,7 +11,8 @@ process_timeseries_data(result_data, pretty = TRUE, wide = TRUE)
 
 \item{pretty}{Format column names to be more readable (default TRUE)}
 
-\item{wide}{Return data in wide format (default TRUE)}
+\item{wide}{Return data in wide format with dates as columns (default TRUE).
+If FALSE, returns data in long format with a date column.}
 }
 \value{
 A tidy tibble with processed timeseries data

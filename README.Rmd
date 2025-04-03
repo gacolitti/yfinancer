@@ -13,7 +13,7 @@ knitr::opts_chunk$set(
 )
 ```
 
-# yfinancer <a href="github.com/gacolitti/yfinancer"><img src="man/figures/logo.png" align="right" height="160" /></a>
+# yfinancer <a href="https://github.com/gacolitti/yfinancer"><img src="man/figures/logo.png" align="right" height="160" /></a>
 
 `yfinancer` provides access to Yahoo Finance's API for retrieving market data. The package includes functions for downloading historical price data, 
 accessing company information, retrieving financial statements, and searching for tickers. It handles API interactions, data parsing, and returns results in 
@@ -22,7 +22,7 @@ tidy tibble format.
 <!-- badges: start -->
 [![R-CMD-check](https://github.com/gacolitti/yfinancer/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/gacolitti/yfinancer/actions/workflows/R-CMD-check.yaml)
 [![Codecov test coverage](https://codecov.io/gh/gacolitti/yfinancer/graph/badge.svg)](https://app.codecov.io/gh/gacolitti/yfinancer)
-[![experimental](https://img.shields.io/badge/experimental-orange.svg)](https://github.com/gaclitti/yfinancer)
+[![experimental](https://img.shields.io/badge/experimental-orange.svg)](https://github.com/gacolitti/yfinancer)
 <!-- badges: end -->
 
 

@@ -17,4 +17,3 @@ The ticker object (invisibly)
 \description{
 Format ticker object print output
 }
-\keyword{internal}

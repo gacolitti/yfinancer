@@ -19,43 +19,88 @@ get_financials(
 )
 }
 \arguments{
-\item{ticker}{A ticker object created with get_tickers) or a ticker symbol}
+\item{ticker}{A ticker object created with \code{get_tickers()} or a ticker symbol string}
 
 \item{freq}{Frequency of data: "annual" or "quarterly" (default "annual")}
 
-\item{start}{Start timestamp (default EOY 2016)}
+\item{start}{Start timestamp as date, datetime, or string (default EOY 2016)}
 
-\item{end}{End timestamp (default current timestamp)}
+\item{end}{End timestamp as date, datetime, or string (default current timestamp)}
 
-\item{cashflow_keys}{Vector of cash flow statement keys (default all)}
+\item{cashflow_keys}{Vector of specific cash flow statement keys to include (default all)
+See \code{valid_cashflow_keys} for available options.}
 
-\item{balance_keys}{Balance sheet keys to retrieve (default all)}
+\item{balance_keys}{Vector of specific balance sheet keys to include (default all)
+See \code{valid_balance_keys} for available options.}
 
-\item{income_keys}{Vector of income statement keys (default all)}
+\item{income_keys}{Vector of specific income statement keys to include (default all)
+See \code{valid_income_keys} for available options.}
 
 \item{pretty}{Format column names to be more readable (default TRUE)}
 
-\item{wide}{Return data in wide format (default TRUE)}
+\item{wide}{Return data in wide format with dates as columns (default TRUE).
+If FALSE, returns data in long format with a date column.}
 
-\item{proxy}{Optional proxy settings}
+\item{proxy}{Optional proxy settings for the request}
 
 \item{output}{Object to return. Can be "tibble", "response", or "request" (default "tibble")}
 }
 \value{
-A list containing income statement, balance sheet, and cash flow statement,
-or if output is "request" or "response", a list of httr2 request or response objects
+A list containing three elements:
+\itemize{
+\item \code{income_statement}: Income statement data
+\item \code{balance_sheet}: Balance sheet data
+\item \code{cashflow}: Cash flow statement data
+}
+
+If output is "request" or "response", returns a list of httr2 request or response objects instead.
 }
 \description{
-Get all financial statements for a ticker
+Retrieves all three main financial statements (income statement, balance sheet, and
+cash flow statement) from Yahoo Finance for a specified ticker symbol in a single call.
+This is a convenience function that calls the individual statement functions and
+returns the results as a list.
+}
+\details{
+Note that this function makes multiple API calls to Yahoo Finance. Be aware of potential
+rate limiting issues when making frequent requests. If you encounter HTTP 429 (Too Many Requests)
+errors, consider implementing a delay between requests or using a proxy.
 }
 \examples{
 \dontrun{
 apple <- get_tickers("AAPL")
 
 # Get all annual financial statements
-financials <- get_financial_statements(apple)
+financials <- get_financials(apple)
+
+# Access individual statements from the results
+income <- financials$income_statement
+balance <- financials$balance_sheet
+cashflow <- financials$cashflow
 
 # Get all quarterly financial statements
-quarterly_financials <- get_financial_statements(apple, freq = "quarterly")
+quarterly_financials <- get_financials(apple, freq = "quarterly")
+
+# Get financial statements for a specific time period
+financials_2020_2022 <- get_financials(apple,
+  start = "2020-01-01",
+  end = "2022-12-31"
+)
+
+# Error handling for all financial statements
+tryCatch(
+  {
+    financials <- get_financials("INVALID_TICKER")
+  },
+  error = function(e) {
+    message("Error retrieving financial data: ", e$message)
+    # Handle the error appropriately
+  }
+)
+
+# Using a proxy to avoid rate limiting
+# Assuming you have a proxy service set up
+proxy_url <- "http://your-proxy-server:port"
+financials_with_proxy <- get_financials(apple, proxy = proxy_url)
 }
 }
