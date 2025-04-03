@@ -2,17 +2,19 @@
 % Please edit documentation in R/info.R
 \name{parse_income_statement}
 \alias{parse_income_statement}
-\title{Parse income statement module data}
+\title{Parse income statement module data from Yahoo Finance API}
 \usage{
 parse_income_statement(result_data)
 }
 \arguments{
-\item{result_data}{The data to parse}
+\item{result_data}{The raw income statement data from Yahoo Finance API}
 }
 \value{
-A tibble with parsed data
+A tibble containing the parsed income statement data with financial metrics
 }
 \description{
-Parse income statement module data
+Transforms the nested income statement data from Yahoo Finance API into a tidy tibble.
+This function handles both annual and quarterly income statements, extracting key
+financial metrics like revenue, expenses, and earnings.
 }
 \keyword{internal}

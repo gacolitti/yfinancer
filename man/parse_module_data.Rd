@@ -7,14 +7,16 @@
 parse_module_data(result_data, module_name)
 }
 \arguments{
-\item{result_data}{The result data from Yahoo Finance API}
+\item{result_data}{The raw result data from Yahoo Finance API}
 
-\item{module_name}{The name of the module to parse}
+\item{module_name}{The name of the module to parse (e.g., "assetProfile", "incomeStatementHistory")}
 }
 \value{
-A tibble with parsed data
+A tibble containing the parsed data specific to the module type
 }
 \description{
-Parse a module's data into a tidy tibble format
+This is the main dispatcher function that routes each Yahoo Finance API module
+to its appropriate parsing function. It uses a dispatch table to determine which
+specialized parser to use based on the module name.
 }
 \keyword{internal}

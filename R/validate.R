@@ -6,7 +6,6 @@
 #' @param symbols A character vector of ticker symbols to validate
 #' @return A tibble with validation results for each symbol
 #' @export
-#' @importFrom tibble tibble
 validate_tickers <- function(symbols = NULL) {
   if (all(!nzchar(symbols))) {
     rlang::abort("Ticker symbols must be a non-empty character vector")
@@ -16,7 +15,7 @@ validate_tickers <- function(symbols = NULL) {
 
   # Return early if no symbols provided
   if (is.null(symbols) || length(symbols) == 0) {
-    return(tibble::tibble(
+    return(dplyr::tibble(
       symbol = character(0),
       isValid = logical(0)
     ))
@@ -44,7 +43,7 @@ validate_tickers <- function(symbols = NULL) {
     error = function(e) {
       message(paste0("Yahoo Finance API request failed\nError: ", e$message))
       # Return tibble with NA values on error
-      tibble::tibble(symbol = symbols, isValid = FALSE)
+      dplyr::tibble(symbol = symbols, isValid = FALSE)
     }
   )
 
@@ -77,7 +76,7 @@ parse_ticker_symbols <- function(symbols) {
 #' @keywords internal
 extract_validation_results <- function(parsed_response, original_symbols) {
   # Initialize result tibble with all requested symbols
-  result <- tibble::tibble(
+  result <- dplyr::tibble(
     symbol = original_symbols,
     isValid = NA
   )
@@ -157,6 +156,11 @@ validate_interval <- function(interval) {
   interval
 }
 
+#' Validate frequency
+#'
+#' @param frequency A character string specifying the frequency (annual, quarterly)
+#' @return The validated frequency
+#' @keywords internal
 validate_frequency <- function(frequency) {
   valid_frequencies <- c("annual", "quarterly")
 

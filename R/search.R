@@ -2,6 +2,19 @@
 #'
 #' This function allows you to search for ticker symbols, companies, ETFs, etc.
 #' using the Yahoo Finance search API. It can also return related news articles.
+#' The search functionality is particularly useful for discovering ticker symbols
+#' when you only know the company name or part of it.
+#'
+#' @section Rate Limiting:
+#' Yahoo Finance does not provide official API documentation or rate limits. Based on community
+#' observations, search queries may be more heavily rate-limited than other endpoints.
+#' To avoid rate limiting:
+#' \itemize{
+#'   \item Limit the frequency of search requests
+#'   \item Cache search results when possible
+#'   \item Consider adding delays between requests (e.g., using `Sys.sleep()`)
+#'   \item Use more specific search queries to reduce the number of needed requests
+#' }
 #'
 #' @param query Search query string
 #' @param limit Maximum number of results to return (default 10)
@@ -93,14 +106,14 @@ search_tickers <- function(
     rlang::warn("Yahoo Finance search API returned an error or empty response.")
     if (output == "all") {
       return(list(
-        quotes = tibble::tibble(),
-        news = tibble::tibble(),
+        quotes = dplyr::tibble(),
+        news = dplyr::tibble(),
         lists = list(),
         research = list(),
         response = resp_json
       ))
     }
-    return(tibble::tibble())
+    return(dplyr::tibble())
   }
 
   # Extract components
@@ -116,7 +129,7 @@ search_tickers <- function(
   if (length(quotes) > 0) {
     quotes_df <- purrr::map_df(quotes, function(quote) {
       # Extract relevant fields
-      tibble::tibble(
+      dplyr::tibble(
         symbol = quote$symbol %||% NA_character_,
         name = quote$shortname %||% quote$longname %||% NA_character_,
         exchange = quote$exchange %||% NA_character_,
@@ -129,13 +142,13 @@ search_tickers <- function(
       )
     })
   } else {
-    quotes_df <- tibble::tibble()
+    quotes_df <- dplyr::tibble()
   }
 
   # Process news if present
   if (length(news) > 0) {
     news_df <- purrr::map_df(news, function(item) {
-      tibble::tibble(
+      dplyr::tibble(
         title = item$title %||% NA_character_,
         publisher = item$publisher %||% NA_character_,
         link = item$link %||% NA_character_,
@@ -144,7 +157,7 @@ search_tickers <- function(
       )
     })
   } else {
-    news_df <- tibble::tibble()
+    news_df <- dplyr::tibble()
   }
 
   # Return result based on output parameter

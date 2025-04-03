@@ -46,7 +46,7 @@ create_historical_df <- function(chart_result) {
   quote <- chart_result[[1]]$indicators$quote[[1]]
 
   # Create data frame from historical data
-  tibble::tibble(
+  dplyr::tibble(
     timestamp = lubridate::as_datetime(timestamps),
     date = as.Date(unix_to_datetime(timestamps)),
     open = unlist(quote$open),
@@ -105,7 +105,7 @@ add_events <- function(data, chart_result) {
     div_timestamps <- as.numeric(names(div_data))
     div_amounts <- purrr::map_dbl(div_data, "amount")
 
-    div_df <- tibble::tibble(
+    div_df <- dplyr::tibble(
       timestamp = div_timestamps,
       date = unix_to_datetime(div_timestamps),
       dividend = div_amounts
@@ -124,7 +124,7 @@ add_events <- function(data, chart_result) {
     split_timestamps <- as.numeric(names(split_data))
     split_ratios <- purrr::map_dbl(split_data, function(x) x$numerator / x$denominator)
 
-    split_df <- tibble::tibble(
+    split_df <- dplyr::tibble(
       timestamp = split_timestamps,
       date = unix_to_datetime(split_timestamps),
       split = split_ratios
@@ -158,6 +158,8 @@ repair_data <- function(data, repair = TRUE) {
 }
 
 #' Get historical market data for a ticker
+#'
+#' Retrieves historical price data from Yahoo Finance for a specified ticker symbol.
 #'
 #' @param ticker A ticker name or ticker object created with `get_tickers()`.
 #' @param period The period to download data for (default "1mo").
@@ -232,7 +234,7 @@ get_history <- function(ticker,
   # Extract chart data
   chart_result <- extract_chart_data(resp_json)
   if (is.null(chart_result)) {
-    return(tibble::tibble())
+    return(dplyr::tibble())
   }
 
   # Process data through a pipeline of operations

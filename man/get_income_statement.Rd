@@ -17,21 +17,23 @@ get_income_statement(
 )
 }
 \arguments{
-\item{ticker}{A ticker object created with get_tickers) or a ticker symbol}
+\item{ticker}{A ticker object created with \code{get_tickers()} or a ticker symbol string}
 
 \item{freq}{Frequency of data: "annual" or "quarterly" (default "annual")}
 
-\item{start}{Start timestamp (default EOY 2016)}
+\item{start}{Start timestamp as date, datetime, or string (default EOY 2016)}
 
-\item{end}{End timestamp (default current timestamp)}
+\item{end}{End timestamp as date, datetime, or string (default current timestamp)}
 
-\item{income_keys}{Vector of income statement keys (default all)}
+\item{income_keys}{Vector of specific income statement keys to include (default all)
+See \code{valid_income_keys} for available options.}
 
 \item{pretty}{Format column names to be more readable (default TRUE)}
 
-\item{wide}{Return data in wide format (default TRUE)}
+\item{wide}{Return data in wide format with dates as columns (default TRUE).
+If FALSE, returns data in long format with a date column.}
 
-\item{proxy}{Optional proxy settings}
+\item{proxy}{Optional proxy settings for the request}
 
 \item{output}{Object to return. Can be "tibble", "response", or "request" (default "tibble")}
 }
@@ -40,8 +42,23 @@ Either a tibble with income statement data, an httr2 response object, or an httr
 depending on the value of the output argument.
 }
 \description{
-Get income statement for a ticker
+Retrieves income statement data from Yahoo Finance for a specified ticker symbol.
+Income statements show a company's revenues, expenses, and profits over a specific period.
 }
+\section{Available Income Keys}{
+
+
+Examples:
+\itemize{
+\item TotalRevenue
+\item GrossProfit
+\item OperatingIncome
+\item NetIncome
+}
+
+See \code{valid_income_keys} for a full list of available income keys.
+}
+
 \examples{
 \dontrun{
 apple <- get_tickers("AAPL")
@@ -51,5 +68,16 @@ income_stmt <- get_income_statement(apple)
 
 # Get quarterly income statement
 quarterly_income <- get_income_statement(apple, freq = "quarterly")
+
+# Get specific income statement items
+revenue_income <- get_income_statement(apple,
+  income_keys = c("TotalRevenue", "NetIncome")
+)
+
+# Get data for a specific time period
+income_2020_2022 <- get_income_statement(apple,
+  start = "2020-01-01",
+  end = "2022-12-31"
+)
 }
 }

@@ -1,7 +1,65 @@
+# This file contains functions for retrieving and processing data for multiple tickers.
+# Many of the functions are wrappers for the corresponding single ticker functions.
+
+#' Format ticker object print output
+#'
+#' @param x The ticker object
+#' @param ... Additional arguments passed to print
+#' @return The ticker object (invisibly)
+#' @export
+print.yf_ticker <- function(x, ...) {
+  cat(sprintf("Yahoo Finance Ticker: %s\n", x$symbol))
+  cat("Available functions for this ticker (used as: function_name(ticker, ...)):\n")
+  cat("  - get_history(): Get historical market data\n")
+  cat("  - get_info(): Get company information\n")
+
+  # Financial statements
+  cat("Financial Statement functions:\n")
+  cat("  - get_financials(): Get all financial statements\n")
+  cat("  - get_income_statement(): Get income statement\n")
+  cat("  - get_balance_sheet(): Get balance sheet\n")
+  cat("  - get_cashflow(): Get cash flow statement\n")
+
+  invisible(x)
+}
+
+#' Format tickers object print output
+#'
+#' @param x The tickers object
+#' @param ... Additional arguments passed to print
+#' @return The tickers object (invisibly)
+#' @export
+print.yf_tickers <- function(x, ...) {
+  cat(sprintf("Yahoo Finance Tickers: %s\n", paste(x$symbols, collapse = ", ")))
+  cat("Available functions for these tickers (used as: function_name(tickers, ...)):\n")
+  cat("  - get_tickers_history(): Get historical market data for all tickers\n")
+  cat("  - get_tickers_info(): Get information for all tickers\n")
+
+  # Financial Statements
+  cat("Financial Statement functions:\n")
+  cat("  - get_tickers_financials(): Get all financial statements for all tickers\n")
+  cat("  - get_tickers_income_statement(): Get income statement for all tickers\n")
+  cat("  - get_tickers_balance_sheet(): Get balance sheet for all tickers\n")
+  cat("  - get_tickers_cashflow(): Get cash flow statement for all tickers\n")
+  invisible(x)
+}
+
 #' Get Ticker Objects
 #'
 #' Creates one or more ticker objects for accessing data for ticker symbols.
-#' This function handles both single and multiple ticker symbols.
+#' This function handles both single and multiple ticker symbols and validates
+#' the provided ticker symbols.
+#'
+#' @section Rate Limiting:
+#' Yahoo Finance does not provide official API documentation or rate limits. Based on community
+#' observations, there are approximate limits of a few hundred requests per day from a single IP
+#' address before throttling may occur. When working with multiple tickers, consider:
+#' \itemize{
+#'   \item Batching requests when possible
+#'   \item Adding delays between requests using `Sys.sleep()`
+#'   \item Caching results for frequently accessed tickers
+#'   \item Using the batch functions (e.g., `get_tickers_history()`) instead of individual calls
+#' }
 #'
 #' @param ... One or more ticker symbols as separate arguments (e.g., "AAPL", "MSFT")
 #' @param proxy Optional proxy settings
@@ -88,61 +146,21 @@ get_tickers <- function(..., proxy = NULL) {
   tickers_obj
 }
 
-#' Format ticker object print output
-#'
-#' @param x The ticker object
-#' @param ... Additional arguments passed to print
-#' @return The ticker object (invisibly)
-#' @export
-#' @keywords internal
-print.yf_ticker <- function(x, ...) {
-  cat(sprintf("Yahoo Finance Ticker: %s\n", x$symbol))
-  cat("Available functions for this ticker (used as: function_name(ticker, ...)):\n")
-  cat("  - get_history(): Get historical market data\n")
-  cat("  - get_info(): Get company information\n")
-
-  # Financial statements
-  cat("Financial Statement functions:\n")
-  cat("  - get_financials(): Get all financial statements\n")
-  cat("  - get_income_statement(): Get income statement\n")
-  cat("  - get_balance_sheet(): Get balance sheet\n")
-  cat("  - get_cashflow(): Get cash flow statement\n")
-
-  invisible(x)
-}
-
-#' Format tickers object print output
-#'
-#' @param x The tickers object
-#' @param ... Additional arguments passed to print
-#' @return The tickers object (invisibly)
-#' @export
-#' @keywords internal
-print.yf_tickers <- function(x, ...) {
-  cat(sprintf("Yahoo Finance Tickers: %s\n", paste(x$symbols, collapse = ", ")))
-  cat("Available functions for these tickers (used as: function_name(tickers, ...)):\n")
-  cat("  - get_tickers_history(): Get historical market data for all tickers\n")
-  cat("  - get_tickers_info(): Get information for all tickers\n")
-
-  # Financial Statements
-  cat("Financial Statement functions:\n")
-  cat("  - get_tickers_financials(): Get all financial statements for all tickers\n")
-  cat("  - get_tickers_income_statement(): Get income statement for all tickers\n")
-  cat("  - get_tickers_balance_sheet(): Get balance sheet for all tickers\n")
-  cat("  - get_tickers_cashflow(): Get cash flow statement for all tickers\n")
-  invisible(x)
-}
-
 #' Get information for multiple tickers
+#'
+#' Retrieves company information from Yahoo Finance for multiple specified ticker symbols.
+#'
+#' See `get_info` for more details on the company information.
+#'
 #' @inheritParams get_info
 #' @param tickers_obj A tickers object created with get_tickers()
 #' @return A list of information for each ticker
-#'
 #' @examples
 #' \dontrun{
 #' tech_tickers <- get_tickers(c("AAPL", "MSFT", "GOOG"))
 #' tech_info <- get_tickers_info(tech_tickers)
 #' }
+#' @export
 get_tickers_info <- function(tickers_obj, modules = "summaryProfile", output = c("tibble", "response", "request"), proxy = NULL) {
   output <- rlang::arg_match(output)
 
@@ -165,15 +183,20 @@ get_tickers_info <- function(tickers_obj, modules = "summaryProfile", output = c
 }
 
 #' Get historical data for multiple tickers
+#'
+#' Retrieves historical market data from Yahoo Finance for multiple specified ticker symbols.
+#'
+#' See `get_history` for more details on the historical market data.
+#'
 #' @inheritParams get_history
 #' @param tickers_obj A tickers object created with get_tickers()
 #' @return A list of tibbles with historical market data for each ticker
-#'
 #' @examples
 #' \dontrun{
 #' tech_tickers <- get_tickers(c("AAPL", "MSFT", "GOOG"))
 #' tech_history <- get_tickers_history(tech_tickers, period = "1y")
 #' }
+#' @export
 get_tickers_history <- function(tickers_obj,
                                 period = "1mo",
                                 interval = "1d",
@@ -215,10 +238,15 @@ get_tickers_history <- function(tickers_obj,
 }
 
 #' Get income statement for multiple tickers
+#'
+#' Retrieves income statement data from Yahoo Finance for multiple specified ticker symbols.
+#' Income statements show a company's revenues, expenses, and profits over a specific period.
+#'
+#' See `get_income_statement` for more details on the income statement.
+#'
 #' @inheritParams get_income_statement
 #' @param tickers_obj A tickers object created with get_tickers()
 #' @return A list of tibbles with income statement data for each ticker
-#'
 #' @examples
 #' \dontrun{
 #' tech_tickers <- get_tickers(c("AAPL", "MSFT", "GOOG"))
@@ -261,10 +289,16 @@ get_tickers_income_statement <- function(tickers_obj, freq = c("annual", "quarte
 }
 
 #' Get balance sheet for multiple tickers
+#'
+#' Retrieves balance sheet data from Yahoo Finance for multiple specified ticker symbols.
+#' Balance sheets show a company's assets, liabilities, and shareholders' equity
+#' at a specific point in time.
+#'
+#' See `get_balance_sheet` for more details on the balance sheet.
+#'
 #' @inheritParams get_balance_sheet
 #' @param tickers_obj A tickers object created with get_tickers()
 #' @return A list of tibbles with balance sheet data for each ticker
-#'
 #' @examples
 #' \dontrun{
 #' tech_tickers <- get_tickers(c("AAPL", "MSFT", "GOOG"))
@@ -307,10 +341,17 @@ get_tickers_balance_sheet <- function(tickers_obj, freq = c("annual", "quarterly
 }
 
 #' Get cash flow statement for multiple tickers
+#'
+#' Retrieves cash flow statement data from Yahoo Finance for multiple specified ticker symbols.
+#' Cash flow statements show how changes in balance sheet accounts and income affect
+#' cash and cash equivalents, breaking the analysis down to operating, investing, and
+#' financing activities.
+#'
+#' See `get_cashflow` for more details on the cash flow statement.
+#'
 #' @inheritParams get_cashflow
 #' @param tickers_obj A tickers object created with get_tickers()
 #' @return A list of tibbles with cash flow statement data for each ticker
-#'
 #' @examples
 #' \dontrun{
 #' tech_tickers <- get_tickers(c("AAPL", "MSFT", "GOOG"))
@@ -356,7 +397,6 @@ get_tickers_cashflow <- function(tickers_obj, freq = c("annual", "quarterly"),
 #' @inheritParams get_financials
 #' @param tickers_obj A tickers object created with get_tickers()
 #' @return A nested list containing financial statements for each ticker
-#'
 #' @examples
 #' \dontrun{
 #' tech_tickers <- get_tickers(c("AAPL", "MSFT", "GOOG"))

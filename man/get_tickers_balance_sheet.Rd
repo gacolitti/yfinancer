@@ -21,17 +21,19 @@ get_tickers_balance_sheet(
 
 \item{freq}{Frequency of data: "annual" or "quarterly" (default "annual")}
 
-\item{start}{Start timestamp (default EOY 2016)}
+\item{start}{Start timestamp as date, datetime, or string (default EOY 2016)}
 
-\item{end}{End timestamp (default current timestamp)}
+\item{end}{End timestamp as date, datetime, or string (default current timestamp)}
 
-\item{balance_keys}{Balance sheet keys to retrieve (default all)}
+\item{balance_keys}{Vector of specific balance sheet keys to include (default all)
+See \code{valid_balance_keys} for available options.}
 
 \item{pretty}{Format column names to be more readable (default TRUE)}
 
-\item{wide}{Return data in wide format (default TRUE)}
+\item{wide}{Return data in wide format with dates as columns (default TRUE).
+If FALSE, returns data in long format with a date column.}
 
-\item{proxy}{Optional proxy settings}
+\item{proxy}{Optional proxy settings for the request}
 
 \item{output}{Object to return. Can be "tibble", "response", or "request" (default "tibble")}
 }
@@ -39,7 +41,12 @@ get_tickers_balance_sheet(
 A list of tibbles with balance sheet data for each ticker
 }
 \description{
-Get balance sheet for multiple tickers
+Retrieves balance sheet data from Yahoo Finance for multiple specified ticker symbols.
+Balance sheets show a company's assets, liabilities, and shareholders' equity
+at a specific point in time.
+}
+\details{
+See \code{get_balance_sheet} for more details on the balance sheet.
 }
 \examples{
 \dontrun{

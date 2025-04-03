@@ -14,17 +14,22 @@ get_tickers_info(
 \arguments{
 \item{tickers_obj}{A tickers object created with get_tickers()}
 
-\item{modules}{A character vector of modules to request from the API}
+\item{modules}{Character vector of module names to retrieve. Default is "summaryProfile".
+See section "Available Modules" for common options.}
 
-\item{output}{The output format for the request (tibble, list, response, request)}
+\item{output}{The type of output to return. Can be "tibble" (default), "list" (raw parsed JSON),
+"response" (httr2 response), or "request" (httr2 request).}
 
-\item{proxy}{A character string specifying the proxy URL}
+\item{proxy}{Optional proxy settings for the request.}
 }
 \value{
 A list of information for each ticker
 }
 \description{
-Get information for multiple tickers
+Retrieves company information from Yahoo Finance for multiple specified ticker symbols.
+}
+\details{
+See \code{get_info} for more details on the company information.
 }
 \examples{
 \dontrun{

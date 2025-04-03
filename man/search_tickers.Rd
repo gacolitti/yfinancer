@@ -44,7 +44,22 @@ Depending on output parameter:
 \description{
 This function allows you to search for ticker symbols, companies, ETFs, etc.
 using the Yahoo Finance search API. It can also return related news articles.
+The search functionality is particularly useful for discovering ticker symbols
+when you only know the company name or part of it.
 }
+\section{Rate Limiting}{
+
+Yahoo Finance does not provide official API documentation or rate limits. Based on community
+observations, search queries may be more heavily rate-limited than other endpoints.
+To avoid rate limiting:
+\itemize{
+\item Limit the frequency of search requests
+\item Cache search results when possible
+\item Consider adding delays between requests (e.g., using \code{Sys.sleep()})
+\item Use more specific search queries to reduce the number of needed requests
+}
+}
+
 \examples{
 \dontrun{
 # Search for Apple

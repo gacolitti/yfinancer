@@ -2,7 +2,7 @@
 % Please edit documentation in R/info.R
 \name{get_info}
 \alias{get_info}
-\title{Get basic information about a ticker}
+\title{Retrieve asset information from Yahoo Finance}
 \usage{
 get_info(
   ticker,
@@ -12,32 +12,76 @@ get_info(
 )
 }
 \arguments{
-\item{ticker}{A ticker name or ticker object created with get_tickers).}
+\item{ticker}{A ticker name or ticker object created with \code{get_tickers()}.}
 
-\item{modules}{A character vector of modules to request from the API}
+\item{modules}{Character vector of module names to retrieve. Default is "summaryProfile".
+See section "Available Modules" for common options.}
 
-\item{output}{The output format for the request (tibble, list, response, request)}
+\item{output}{The type of output to return. Can be "tibble" (default), "list" (raw parsed JSON),
+"response" (httr2 response), or "request" (httr2 request).}
 
-\item{proxy}{A character string specifying the proxy URL}
+\item{proxy}{Optional proxy settings for the request.}
 }
 \value{
-A tibble, list, response, or request object containing the requested information.
-If multiple modules are requested, returns a list of tibbles. Some individual modules
-may return a list of tibbles even when output is set to "tibble" because the underlying
-data contains multiple datasets.
+Depending on the output parameter and number of modules requested:
+\itemize{
+\item For a single module with output="tibble": A tibble containing the module data
+\item For multiple modules with output="tibble": A named list of tibbles, one per module
+\item For output="list": The raw parsed JSON data
+\item For output="response": The httr2 response object
+\item For output="request": The httr2 request object
+}
 }
 \description{
-Get basic information about a ticker
+This function retrieves detailed asset information from Yahoo Finance's quoteSummary API.
+It can fetch various types of data including asset profiles, financial statements, key statistics,
+and more. The function supports retrieving multiple data modules in a single request.
 }
+\section{Available Modules}{
+
+The \code{modules} parameter accepts any of the valid module names from Yahoo Finance API.
+Common modules include:
+\itemize{
+\item \code{"assetProfile"}: Asset overview, description, industry, sector, officers
+\item \code{"summaryProfile"}: Brief asset profile information
+\item \code{"financialData"}: Key financial metrics and ratios
+\item \code{"defaultKeyStatistics"}: Important statistics like market cap, P/E ratio
+\item \code{"incomeStatementHistory"}: Annual income statements
+\item \code{"incomeStatementHistoryQuarterly"}: Quarterly income statements
+\item \code{"balanceSheetHistory"}: Annual balance sheets
+\item \code{"balanceSheetHistoryQuarterly"}: Quarterly balance sheets
+\item \code{"cashflowStatementHistory"}: Annual cash flow statements
+\item \code{"cashflowStatementHistoryQuarterly"}: Quarterly cash flow statements
+}
+
+See \code{valid_modules} for a complete list of available modules.
+}
+
 \examples{
 \dontrun{
-# Get a single module
+# Get a single ticker
 apple <- get_tickers("AAPL")
+
+# Get summary information
+# using default module "summaryProfile"
+apple_summary <- get_info(apple)
+
+# Get basic company profile
 apple_profile <- get_info(apple, modules = "assetProfile")
 
+# Get key financial metrics
+apple_financials <- get_info(apple, modules = "financialData")
+
 # Get multiple modules as a list of tibbles
-apple_financials <- get_info(apple,
-  modules = c("incomeStatementHistory", "balanceSheetHistory")
+apple_data <- get_info(apple,
+  modules = c("incomeStatementHistory", "balanceSheetHistory", "cashflowStatementHistory")
 )
+
+# Access specific financial statements
+income_statement <- apple_data$incomeStatementHistory
+balance_sheet <- apple_data$balanceSheetHistory
+
+# Get raw JSON response for custom processing
+apple_raw <- get_info(apple, modules = "assetProfile", output = "response")
 }
 }

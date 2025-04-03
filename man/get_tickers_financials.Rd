@@ -23,21 +23,25 @@ get_tickers_financials(
 
 \item{freq}{Frequency of data: "annual" or "quarterly" (default "annual")}
 
-\item{start}{Start timestamp (default EOY 2016)}
+\item{start}{Start timestamp as date, datetime, or string (default EOY 2016)}
 
-\item{end}{End timestamp (default current timestamp)}
+\item{end}{End timestamp as date, datetime, or string (default current timestamp)}
 
-\item{cashflow_keys}{Vector of cash flow statement keys (default all)}
+\item{cashflow_keys}{Vector of specific cash flow statement keys to include (default all)
+See \code{valid_cashflow_keys} for available options.}
 
-\item{balance_keys}{Balance sheet keys to retrieve (default all)}
+\item{balance_keys}{Vector of specific balance sheet keys to include (default all)
+See \code{valid_balance_keys} for available options.}
 
-\item{income_keys}{Vector of income statement keys (default all)}
+\item{income_keys}{Vector of specific income statement keys to include (default all)
+See \code{valid_income_keys} for available options.}
 
 \item{pretty}{Format column names to be more readable (default TRUE)}
 
-\item{wide}{Return data in wide format (default TRUE)}
+\item{wide}{Return data in wide format with dates as columns (default TRUE).
+If FALSE, returns data in long format with a date column.}
 
-\item{proxy}{Optional proxy settings}
+\item{proxy}{Optional proxy settings for the request}
 
 \item{output}{Object to return. Can be "tibble", "response", or "request" (default "tibble")}
 }

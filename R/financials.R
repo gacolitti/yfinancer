@@ -1,16 +1,44 @@
+# financials.R - Retrieve financial statements from Yahoo Finance
+#
+# This file contains functions for retrieving and processing financial statement data
+# from Yahoo Finance, including income statements, balance sheets, and cash flow statements.
+# The functions handle data formatting, time range selection, and provide options for
+# both annual and quarterly financial data.
+#
+# The main functions are:
+# - get_income_statement(): Retrieves income statement data
+# - get_balance_sheet(): Retrieves balance sheet data
+# - get_cashflow(): Retrieves cash flow statement data
+# - get_financials(): Retrieves all three financial statements in one call
+
 #' Get income statement for a ticker
 #'
-#' @param ticker A ticker object created with get_tickers) or a ticker symbol
+#' Retrieves income statement data from Yahoo Finance for a specified ticker symbol.
+#' Income statements show a company's revenues, expenses, and profits over a specific period.
+#'
+#' @param ticker A ticker object created with `get_tickers()` or a ticker symbol string
 #' @param freq Frequency of data: "annual" or "quarterly" (default "annual")
-#' @param start Start timestamp (default EOY 2016)
-#' @param end End timestamp (default current timestamp)
-#' @param income_keys Vector of income statement keys (default all)
+#' @param start Start timestamp as date, datetime, or string (default EOY 2016)
+#' @param end End timestamp as date, datetime, or string (default current timestamp)
+#' @param income_keys Vector of specific income statement keys to include (default all)
+#'   See `valid_income_keys` for available options.
 #' @param pretty Format column names to be more readable (default TRUE)
-#' @param wide Return data in wide format (default TRUE)
-#' @param proxy Optional proxy settings
+#' @param wide Return data in wide format with dates as columns (default TRUE).
+#'   If FALSE, returns data in long format with a date column.
+#' @param proxy Optional proxy settings for the request
 #' @param output Object to return. Can be "tibble", "response", or "request" (default "tibble")
 #' @return Either a tibble with income statement data, an httr2 response object, or an httr2 request object
 #'   depending on the value of the output argument.
+#'
+#' @section Available Income Keys:
+#'
+#' Examples:
+#' - TotalRevenue
+#' - GrossProfit
+#' - OperatingIncome
+#' - NetIncome
+#'
+#' See `valid_income_keys` for a full list of available income keys.
 #'
 #' @examples
 #' \dontrun{
@@ -21,6 +49,17 @@
 #'
 #' # Get quarterly income statement
 #' quarterly_income <- get_income_statement(apple, freq = "quarterly")
+#'
+#' # Get specific income statement items
+#' revenue_income <- get_income_statement(apple,
+#'   income_keys = c("TotalRevenue", "NetIncome")
+#' )
+#'
+#' # Get data for a specific time period
+#' income_2020_2022 <- get_income_statement(apple,
+#'   start = "2020-01-01",
+#'   end = "2022-12-31"
+#' )
 #' }
 #' @export
 get_income_statement <- function(ticker, freq = c("annual", "quarterly"),
@@ -80,7 +119,7 @@ get_income_statement <- function(ticker, freq = c("annual", "quarterly"),
   # Check if we have valid data
   if (is.null(resp_json$timeseries) || is.null(resp_json$timeseries$result) || length(resp_json$timeseries$result) == 0) {
     warning(sprintf("No income statement data available for %s", ticker$symbol))
-    return(tibble::tibble())
+    return(dplyr::tibble())
   }
 
   # Extract the result data
@@ -94,10 +133,24 @@ get_income_statement <- function(ticker, freq = c("annual", "quarterly"),
 
 #' Get balance sheet for a ticker
 #'
+#' Retrieves balance sheet data from Yahoo Finance for a specified ticker symbol.
+#' Balance sheets show a company's assets, liabilities, and shareholders' equity
+#' at a specific point in time.
+#'
 #' @inheritParams get_income_statement
-#' @param balance_keys Balance sheet keys to retrieve (default all)
+#' @param balance_keys Vector of specific balance sheet keys to include (default all)
+#'   See `valid_balance_keys` for available options.
 #' @return Either a tibble with balance sheet data, an httr2 response object, or an httr2 request object
 #'   depending on the value of the output argument.
+#'
+#' @section Available Balance Keys:
+#'
+#' Examples:
+#' - TotalAssets
+#' - TotalCapitalization
+#' - CurrentAssets
+#'
+#' See `valid_balance_keys` for a full list of available balance keys.
 #'
 #' @examples
 #' \dontrun{
@@ -108,6 +161,17 @@ get_income_statement <- function(ticker, freq = c("annual", "quarterly"),
 #'
 #' # Get quarterly balance sheet
 #' quarterly_balance <- get_balance_sheet(apple, freq = "quarterly")
+#'
+#' # Get specific balance sheet items
+#' assets_liabilities <- get_balance_sheet(apple,
+#'   balance_keys = c("TotalAssets", "TotalLiabilities")
+#' )
+#'
+#' # Get data for a specific time period
+#' balance_2020_2022 <- get_balance_sheet(apple,
+#'   start = "2020-01-01",
+#'   end = "2022-12-31"
+#' )
 #' }
 #' @export
 get_balance_sheet <- function(ticker, freq = c("annual", "quarterly"),
@@ -168,7 +232,7 @@ get_balance_sheet <- function(ticker, freq = c("annual", "quarterly"),
   # Check if we have valid data
   if (is.null(resp_json$timeseries) || is.null(resp_json$timeseries$result) || length(resp_json$timeseries$result) == 0) {
     warning(sprintf("No balance sheet data available for %s", ticker$symbol))
-    return(tibble::tibble())
+    return(dplyr::tibble())
   }
 
   # Extract the result data
@@ -181,10 +245,25 @@ get_balance_sheet <- function(ticker, freq = c("annual", "quarterly"),
 }
 
 #' Get cash flow statement for a ticker
+#'
+#' Retrieves cash flow statement data from Yahoo Finance for a specified ticker symbol.
+#' Cash flow statements show how changes in balance sheet accounts and income affect
+#' cash and cash equivalents, breaking the analysis down to operating, investing, and
+#' financing activities.
+#'
 #' @inheritParams get_income_statement
-#' @param cashflow_keys Vector of cash flow statement keys (default all)
+#' @param cashflow_keys Vector of specific cash flow statement keys to include (default all)
+#'   See `valid_cashflow_keys` for available options.
 #' @return Either a tibble with cash flow statement data, an httr2 response object, or an httr2 request object
 #'   depending on the value of the output argument.
+#'
+#' @section Available Cashflow Keys:
+#'
+#' Examples:
+#' - OperatingCashFlow
+#' - FreeCashFlow
+#'
+#' See `valid_cashflow_keys` for a full list of available cashflow keys.
 #'
 #' @examples
 #' \dontrun{
@@ -195,6 +274,28 @@ get_balance_sheet <- function(ticker, freq = c("annual", "quarterly"),
 #'
 #' # Get quarterly cash flow statement
 #' quarterly_cash_flow <- get_cashflow(apple, freq = "quarterly")
+#'
+#' # Get specific cash flow items
+#' operating_cash <- get_cashflow(apple,
+#'   cashflow_keys = c("OperatingCashFlow", "FreeCashFlow")
+#' )
+#'
+#' # Get data for a specific time period
+#' cash_2020_2022 <- get_cashflow(apple,
+#'   start = "2020-01-01",
+#'   end = "2022-12-31"
+#' )
+#'
+#' # Error handling example
+#' tryCatch(
+#'   {
+#'     cash_flow <- get_cashflow("INVALID_TICKER")
+#'   },
+#'   error = function(e) {
+#'     message("Error retrieving cash flow data: ", e$message)
+#'     # Handle the error appropriately
+#'   }
+#' )
 #' }
 #' @export
 get_cashflow <- function(ticker, freq = c("annual", "quarterly"),
@@ -256,7 +357,7 @@ get_cashflow <- function(ticker, freq = c("annual", "quarterly"),
   # Check if we have valid data
   if (is.null(resp_json$timeseries) || is.null(resp_json$timeseries$result) || length(resp_json$timeseries$result) == 0) {
     warning(sprintf("No cash flow data available for %s", ticker$symbol))
-    return(tibble::tibble())
+    return(dplyr::tibble())
   }
 
   # Extract the result data
@@ -277,7 +378,7 @@ get_cashflow <- function(ticker, freq = c("annual", "quarterly"),
 process_timeseries_data <- function(result_data, pretty = TRUE, wide = TRUE) {
   # If no data, return empty tibble
   if (length(result_data) == 0) {
-    return(tibble::tibble())
+    return(dplyr::tibble())
   }
 
   # Create a list to collect all observations
@@ -328,12 +429,12 @@ process_timeseries_data <- function(result_data, pretty = TRUE, wide = TRUE) {
 
   # If no observations collected, return empty tibble
   if (length(all_observations) == 0) {
-    return(tibble::tibble())
+    return(dplyr::tibble())
   }
 
   # Convert to tibble
   result_df <- do.call(rbind, lapply(all_observations, as.data.frame))
-  result_tbl <- tibble::as_tibble(result_df)
+  result_tbl <- dplyr::as_tibble(result_df)
 
   # Clean up metric names if pretty is TRUE
   if (pretty && nrow(result_tbl) > 0) {
@@ -354,21 +455,61 @@ process_timeseries_data <- function(result_data, pretty = TRUE, wide = TRUE) {
 
 #' Get all financial statements for a ticker
 #'
+#' Retrieves all three main financial statements (income statement, balance sheet, and
+#' cash flow statement) from Yahoo Finance for a specified ticker symbol in a single call.
+#' This is a convenience function that calls the individual statement functions and
+#' returns the results as a list.
+#'
+#' Note that this function makes multiple API calls to Yahoo Finance. Be aware of potential
+#' rate limiting issues when making frequent requests. If you encounter HTTP 429 (Too Many Requests)
+#' errors, consider implementing a delay between requests or using a proxy.
+#'
 #' @inheritParams get_income_statement
 #' @inheritParams get_balance_sheet
 #' @inheritParams get_cashflow
-#' @return A list containing income statement, balance sheet, and cash flow statement,
-#'   or if output is "request" or "response", a list of httr2 request or response objects
+#' @return A list containing three elements:
+#'   - `income_statement`: Income statement data
+#'   - `balance_sheet`: Balance sheet data
+#'   - `cashflow`: Cash flow statement data
+#'
+#'   If output is "request" or "response", returns a list of httr2 request or response objects instead.
 #'
 #' @examples
 #' \dontrun{
 #' apple <- get_tickers("AAPL")
 #'
 #' # Get all annual financial statements
-#' financials <- get_financial_statements(apple)
+#' financials <- get_financials(apple)
+#'
+#' # Access individual statements from the results
+#' income <- financials$income_statement
+#' balance <- financials$balance_sheet
+#' cashflow <- financials$cashflow
 #'
 #' # Get all quarterly financial statements
-#' quarterly_financials <- get_financial_statements(apple, freq = "quarterly")
+#' quarterly_financials <- get_financials(apple, freq = "quarterly")
+#'
+#' # Get financial statements for a specific time period
+#' financials_2020_2022 <- get_financials(apple,
+#'   start = "2020-01-01",
+#'   end = "2022-12-31"
+#' )
+#'
+#' # Error handling for all financial statements
+#' tryCatch(
+#'   {
+#'     financials <- get_financials("INVALID_TICKER")
+#'   },
+#'   error = function(e) {
+#'     message("Error retrieving financial data: ", e$message)
+#'     # Handle the error appropriately
+#'   }
+#' )
+#'
+#' # Using a proxy to avoid rate limiting
+#' # Assuming you have a proxy service set up
+#' proxy_url <- "http://your-proxy-server:port"
+#' financials_with_proxy <- get_financials(apple, proxy = proxy_url)
 #' }
 #' @export
 get_financials <- function(ticker, freq = "annual",

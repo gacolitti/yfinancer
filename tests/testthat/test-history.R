@@ -8,7 +8,7 @@ test_that("get_history returns data for valid ticker", {
   history <- get_history(ticker, period = "1d")
 
   # Check that we got data
-  expect_true(tibble::is_tibble(history))
+  expect_s3_class(history, "tbl_df")
   expect_gt(nrow(history), 0)
 
   # Check that the structure is correct

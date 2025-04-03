@@ -53,7 +53,7 @@ test_that("get_tickers_history returns data for valid tickers", {
 
   # Check individual ticker data
   for (ticker_data in history) {
-    expect_true(tibble::is_tibble(ticker_data))
+    expect_s3_class(ticker_data, "tbl_df")
     expect_gt(nrow(ticker_data), 0)
 
     # Check that the structure is correct
@@ -100,8 +100,8 @@ test_that("get_tickers_income_statement returns data for valid tickers", {
 
   # Check individual ticker data
   for (income_stmt in income_statements) {
-    expect_true(tibble::is_tibble(income_stmt) || length(income_stmt) == 0)
-    if (tibble::is_tibble(income_stmt) && nrow(income_stmt) > 0) {
+    expect_s3_class(income_stmt, "tbl_df")
+    if (nrow(income_stmt) > 0) {
       expect_true("date" %in% names(income_stmt))
     }
   }
@@ -122,8 +122,8 @@ test_that("get_tickers_balance_sheet returns data for valid tickers", {
 
   # Check individual ticker data
   for (balance_sheet in balance_sheets) {
-    expect_true(tibble::is_tibble(balance_sheet) || length(balance_sheet) == 0)
-    if (tibble::is_tibble(balance_sheet) && nrow(balance_sheet) > 0) {
+    expect_s3_class(balance_sheet, "tbl_df")
+    if (nrow(balance_sheet) > 0) {
       expect_true("date" %in% names(balance_sheet))
     }
   }
@@ -144,8 +144,8 @@ test_that("get_tickers_cashflow returns data for valid tickers", {
 
   # Check individual ticker data
   for (cashflow in cashflows) {
-    expect_true(tibble::is_tibble(cashflow) || length(cashflow) == 0)
-    if (tibble::is_tibble(cashflow) && nrow(cashflow) > 0) {
+    expect_s3_class(cashflow, "tbl_df")
+    if (nrow(cashflow) > 0) {
       expect_true("date" %in% names(cashflow))
     }
   }
@@ -166,12 +166,12 @@ test_that("get_tickers_financials returns data for valid tickers", {
 
   # Check individual ticker data
   for (financial in financials) {
-    expect_true(is.list(financial))
+    expect_type(financial, "list")
     expect_equal(names(financial), c("income_statement", "balance_sheet", "cashflow"))
 
     # Check that each statement is either a tibble or empty
     for (statement in financial) {
-      expect_true(tibble::is_tibble(statement) || length(statement) == 0)
+      expect_s3_class(statement, "tbl_df")
     }
   }
 })
