@@ -1,13 +1,24 @@
-# Info.R - Retrieve and parsing Yahoo Finance quoteSummary data
+# Info.R - Retrieve and parse Yahoo Finance quoteSummary data
 #
-# This file contains functions for parsing Yahoo Finance quoteSummary API data
-# into tidy tibble formats using tidyverse functions to handle nested data.
-# The main parsing function uses a dispatch table to route each module type
-# to its appropriate parsing function, greatly reducing code complexity.
+# This file contains functions for retrieving and parsing Yahoo Finance quoteSummary API data
+# into tidy tibble formats. It handles the complex nested JSON structure of Yahoo Finance's API
+# using tidyverse functions to transform the data into clean, usable tibbles.
+#
+# The main parsing architecture uses a dispatch table to route each module type
+# to its appropriate parsing function, allowing for modular and maintainable code.
+# This approach makes it easy to add support for new Yahoo Finance API modules.
+#
+# The primary public function is get_info(), which retrieves company information
+# for a given ticker symbol and specified modules.
 
-#' Parse asset profile module data
-#' @param result_data The data to parse
-#' @return A tibble with parsed data
+#' Parse asset profile module data from Yahoo Finance API
+#'
+#' Transforms the nested asset profile data from Yahoo Finance API into a tidy tibble.
+#' This includes company information such as industry, sector, description, address,
+#' and company officers.
+#'
+#' @param result_data The raw asset profile data from Yahoo Finance API
+#' @return A tibble containing the parsed asset profile data with nested company officers data
 #' @keywords internal
 parse_asset_profile <- function(result_data) {
   tbl <- dplyr::tibble(data = list(result_data)) |>
@@ -35,9 +46,13 @@ parse_asset_profile <- function(result_data) {
   tbl
 }
 
-#' Parse balance sheet module data
-#' @param result_data The data to parse
-#' @return A tibble with parsed data
+#' Parse balance sheet module data from Yahoo Finance API
+#'
+#' Transforms the nested balance sheet data from Yahoo Finance API into a tidy tibble.
+#' This function handles both annual and quarterly balance sheet statements.
+#'
+#' @param result_data The raw balance sheet data from Yahoo Finance API
+#' @return A tibble containing the parsed balance sheet data with financial metrics
 #' @keywords internal
 parse_balance_sheet <- function(result_data) {
   if (!is.null(result_data$balanceSheetStatements)) {
@@ -50,9 +65,13 @@ parse_balance_sheet <- function(result_data) {
   tbl
 }
 
-#' Parse cash flow statement module data
-#' @param result_data The data to parse
-#' @return A tibble with parsed data
+#' Parse cash flow statement module data from Yahoo Finance API
+#'
+#' Transforms the nested cash flow statement data from Yahoo Finance API into a tidy tibble.
+#' This function handles both annual and quarterly cash flow statements.
+#'
+#' @param result_data The raw cash flow statement data from Yahoo Finance API
+#' @return A tibble containing the parsed cash flow data with financial metrics
 #' @keywords internal
 parse_cashflow_statement <- function(result_data) {
   if (!is.null(result_data$cashflowStatements)) {
@@ -496,9 +515,14 @@ parse_up_down_history <- function(result_data) {
   up_down_history
 }
 
-#' Parse income statement module data
-#' @param result_data The data to parse
-#' @return A tibble with parsed data
+#' Parse income statement module data from Yahoo Finance API
+#'
+#' Transforms the nested income statement data from Yahoo Finance API into a tidy tibble.
+#' This function handles both annual and quarterly income statements, extracting key
+#' financial metrics like revenue, expenses, and earnings.
+#'
+#' @param result_data The raw income statement data from Yahoo Finance API
+#' @return A tibble containing the parsed income statement data with financial metrics
 #' @keywords internal
 parse_income_statement <- function(result_data) {
   income_statement_history <- dplyr::tibble(data = list(result_data)) |>
@@ -563,9 +587,13 @@ parse_generic_module <- function(result_data) {
 
 #' Parse a module's data into a tidy tibble format
 #'
-#' @param result_data The result data from Yahoo Finance API
-#' @param module_name The name of the module to parse
-#' @return A tibble with parsed data
+#' This is the main dispatcher function that routes each Yahoo Finance API module
+#' to its appropriate parsing function. It uses a dispatch table to determine which
+#' specialized parser to use based on the module name.
+#'
+#' @param result_data The raw result data from Yahoo Finance API
+#' @param module_name The name of the module to parse (e.g., "assetProfile", "incomeStatementHistory")
+#' @return A tibble containing the parsed data specific to the module type
 #' @keywords internal
 parse_module_data <- function(result_data, module_name) {
   if (is.null(result_data) || length(result_data) == 0) {
@@ -775,28 +803,71 @@ process_nested_cols <- function(tibble, prefix = NULL) {
   tibble
 }
 
-#' Get basic information about a ticker
+#' Retrieve asset information from Yahoo Finance
 #'
-#' @param ticker A ticker name or ticker object created with get_tickers).
-#' @param modules A character vector of modules to request from the API
-#' @param output The output format for the request (tibble, list, response, request)
-#' @param proxy A character string specifying the proxy URL
-#' @return A tibble, list, response, or request object containing the requested information.
-#'   If multiple modules are requested, returns a list of tibbles. Some individual modules
-#'   may return a list of tibbles even when output is set to "tibble" because the underlying
-#'   data contains multiple datasets.
+#' This function retrieves detailed asset information from Yahoo Finance's quoteSummary API.
+#' It can fetch various types of data including asset profiles, financial statements, key statistics,
+#' and more. The function supports retrieving multiple data modules in a single request.
+#'
+#' @param ticker A ticker name or ticker object created with `get_tickers()`.
+#' @param modules Character vector of module names to retrieve. Default is "summaryProfile".
+#'   See section "Available Modules" for common options.
+#' @param output The type of output to return. Can be "tibble" (default), "list" (raw parsed JSON),
+#'   "response" (httr2 response), or "request" (httr2 request).
+#' @param proxy Optional proxy settings for the request.
+#' @return Depending on the output parameter and number of modules requested:
+#'   - For a single module with output="tibble": A tibble containing the module data
+#'   - For multiple modules with output="tibble": A named list of tibbles, one per module
+#'   - For output="list": The raw parsed JSON data
+#'   - For output="response": The httr2 response object
+#'   - For output="request": The httr2 request object
+#'
+#' @section Available Modules:
+#' The `modules` parameter accepts any of the valid module names from Yahoo Finance API.
+#' Common modules include:
+#' \itemize{
+#'   \item `"assetProfile"`: Asset overview, description, industry, sector, officers
+#'   \item `"summaryProfile"`: Brief asset profile information
+#'   \item `"financialData"`: Key financial metrics and ratios
+#'   \item `"defaultKeyStatistics"`: Important statistics like market cap, P/E ratio
+#'   \item `"incomeStatementHistory"`: Annual income statements
+#'   \item `"incomeStatementHistoryQuarterly"`: Quarterly income statements
+#'   \item `"balanceSheetHistory"`: Annual balance sheets
+#'   \item `"balanceSheetHistoryQuarterly"`: Quarterly balance sheets
+#'   \item `"cashflowStatementHistory"`: Annual cash flow statements
+#'   \item `"cashflowStatementHistoryQuarterly"`: Quarterly cash flow statements
+#' }
+#'
+#' See `valid_modules` for a complete list of available modules.
 #'
 #' @examples
 #' \dontrun{
-#' # Get a single module
+#' # Get a single ticker
 #' apple <- get_tickers("AAPL")
+#'
+#' # Get summary information
+#' # using default module "summaryProfile"
+#' apple_summary <- get_info(apple)
+#'
+#' # Get basic company profile
 #' apple_profile <- get_info(apple, modules = "assetProfile")
 #'
+#' # Get key financial metrics
+#' apple_financials <- get_info(apple, modules = "financialData")
+#'
 #' # Get multiple modules as a list of tibbles
-#' apple_financials <- get_info(apple,
-#'   modules = c("incomeStatementHistory", "balanceSheetHistory")
+#' apple_data <- get_info(apple,
+#'   modules = c("incomeStatementHistory", "balanceSheetHistory", "cashflowStatementHistory")
 #' )
+#'
+#' # Access specific financial statements
+#' income_statement <- apple_data$incomeStatementHistory
+#' balance_sheet <- apple_data$balanceSheetHistory
+#'
+#' # Get raw JSON response for custom processing
+#' apple_raw <- get_info(apple, modules = "assetProfile", output = "response")
 #' }
+#' @export
 get_info <- function(ticker,
                      modules = "summaryProfile",
                      output = c("tibble", "list", "response", "request"),
@@ -860,7 +931,7 @@ get_info <- function(ticker,
 
   # If no modules were processed successfully, return an empty tibble
   if (length(module_data_list) == 0) {
-    return(tibble::tibble())
+    return(dplyr::tibble())
   }
 
   # Return based on user preference and number of modules

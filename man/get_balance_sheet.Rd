@@ -17,21 +17,23 @@ get_balance_sheet(
 )
 }
 \arguments{
-\item{ticker}{A ticker object created with get_tickers) or a ticker symbol}
+\item{ticker}{A ticker object created with \code{get_tickers()} or a ticker symbol string}
 
 \item{freq}{Frequency of data: "annual" or "quarterly" (default "annual")}
 
-\item{start}{Start timestamp (default EOY 2016)}
+\item{start}{Start timestamp as date, datetime, or string (default EOY 2016)}
 
-\item{end}{End timestamp (default current timestamp)}
+\item{end}{End timestamp as date, datetime, or string (default current timestamp)}
 
-\item{balance_keys}{Balance sheet keys to retrieve (default all)}
+\item{balance_keys}{Vector of specific balance sheet keys to include (default all)
+See \code{valid_balance_keys} for available options.}
 
 \item{pretty}{Format column names to be more readable (default TRUE)}
 
-\item{wide}{Return data in wide format (default TRUE)}
+\item{wide}{Return data in wide format with dates as columns (default TRUE).
+If FALSE, returns data in long format with a date column.}
 
-\item{proxy}{Optional proxy settings}
+\item{proxy}{Optional proxy settings for the request}
 
 \item{output}{Object to return. Can be "tibble", "response", or "request" (default "tibble")}
 }
@@ -40,8 +42,23 @@ Either a tibble with balance sheet data, an httr2 response object, or an httr2 r
 depending on the value of the output argument.
 }
 \description{
-Get balance sheet for a ticker
+Retrieves balance sheet data from Yahoo Finance for a specified ticker symbol.
+Balance sheets show a company's assets, liabilities, and shareholders' equity
+at a specific point in time.
 }
+\section{Available Balance Keys}{
+
+
+Examples:
+\itemize{
+\item TotalAssets
+\item TotalCapitalization
+\item CurrentAssets
+}
+
+See \code{valid_balance_keys} for a full list of available balance keys.
+}
+
 \examples{
 \dontrun{
 apple <- get_tickers("AAPL")
@@ -51,5 +68,16 @@ balance_sheet <- get_balance_sheet(apple)
 
 # Get quarterly balance sheet
 quarterly_balance <- get_balance_sheet(apple, freq = "quarterly")
+
+# Get specific balance sheet items
+assets_liabilities <- get_balance_sheet(apple,
+  balance_keys = c("TotalAssets", "TotalLiabilities")
+)
+
+# Get data for a specific time period
+balance_2020_2022 <- get_balance_sheet(apple,
+  start = "2020-01-01",
+  end = "2022-12-31"
+)
 }
 }

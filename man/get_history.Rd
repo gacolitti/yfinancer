@@ -48,7 +48,7 @@ Either a tibble with historical market data, an httr2 response object, or an htt
 depending on the value of the output argument.
 }
 \description{
-Get historical market data for a ticker
+Retrieves historical price data from Yahoo Finance for a specified ticker symbol.
 }
 \examples{
 \dontrun{

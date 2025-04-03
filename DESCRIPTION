@@ -1,6 +1,6 @@
 Package: yfinancer
 Title: Yahoo Finance API for R
-Version: 0.1.1
+Version: 0.1.2
 Authors@R: 
     person("Giovanni", "Colitti", email = "g.a.colitti@gmail.com", role = c("aut", "cre"))
 Description: A comprehensive wrapper for Yahoo Finance's API in R. This package 
@@ -24,7 +24,6 @@ Imports:
     jsonlite,
     purrr,
     dplyr,
-    tibble,
     lubridate,
     rlang,
     stringr,

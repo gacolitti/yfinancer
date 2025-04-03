@@ -17,8 +17,22 @@ For multiple symbols: A list containing multiple ticker objects with class "yf_t
 }
 \description{
 Creates one or more ticker objects for accessing data for ticker symbols.
-This function handles both single and multiple ticker symbols.
+This function handles both single and multiple ticker symbols and validates
+the provided ticker symbols.
 }
+\section{Rate Limiting}{
+
+Yahoo Finance does not provide official API documentation or rate limits. Based on community
+observations, there are approximate limits of a few hundred requests per day from a single IP
+address before throttling may occur. When working with multiple tickers, consider:
+\itemize{
+\item Batching requests when possible
+\item Adding delays between requests using \code{Sys.sleep()}
+\item Caching results for frequently accessed tickers
+\item Using the batch functions (e.g., \code{get_tickers_history()}) instead of individual calls
+}
+}
+
 \examples{
 \dontrun{
 # Get a single ticker

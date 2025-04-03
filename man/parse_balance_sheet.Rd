@@ -2,17 +2,18 @@
 % Please edit documentation in R/info.R
 \name{parse_balance_sheet}
 \alias{parse_balance_sheet}
-\title{Parse balance sheet module data}
+\title{Parse balance sheet module data from Yahoo Finance API}
 \usage{
 parse_balance_sheet(result_data)
 }
 \arguments{
-\item{result_data}{The data to parse}
+\item{result_data}{The raw balance sheet data from Yahoo Finance API}
 }
 \value{
-A tibble with parsed data
+A tibble containing the parsed balance sheet data with financial metrics
 }
 \description{
-Parse balance sheet module data
+Transforms the nested balance sheet data from Yahoo Finance API into a tidy tibble.
+This function handles both annual and quarterly balance sheet statements.
 }
 \keyword{internal}

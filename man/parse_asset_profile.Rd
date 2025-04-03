@@ -2,17 +2,19 @@
 % Please edit documentation in R/info.R
 \name{parse_asset_profile}
 \alias{parse_asset_profile}
-\title{Parse asset profile module data}
+\title{Parse asset profile module data from Yahoo Finance API}
 \usage{
 parse_asset_profile(result_data)
 }
 \arguments{
-\item{result_data}{The data to parse}
+\item{result_data}{The raw asset profile data from Yahoo Finance API}
 }
 \value{
-A tibble with parsed data
+A tibble containing the parsed asset profile data with nested company officers data
 }
 \description{
-Parse asset profile module data
+Transforms the nested asset profile data from Yahoo Finance API into a tidy tibble.
+This includes company information such as industry, sector, description, address,
+and company officers.
 }
 \keyword{internal}

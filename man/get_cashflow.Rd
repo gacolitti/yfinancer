@@ -17,21 +17,23 @@ get_cashflow(
 )
 }
 \arguments{
-\item{ticker}{A ticker object created with get_tickers) or a ticker symbol}
+\item{ticker}{A ticker object created with \code{get_tickers()} or a ticker symbol string}
 
 \item{freq}{Frequency of data: "annual" or "quarterly" (default "annual")}
 
-\item{start}{Start timestamp (default EOY 2016)}
+\item{start}{Start timestamp as date, datetime, or string (default EOY 2016)}
 
-\item{end}{End timestamp (default current timestamp)}
+\item{end}{End timestamp as date, datetime, or string (default current timestamp)}
 
-\item{cashflow_keys}{Vector of cash flow statement keys (default all)}
+\item{cashflow_keys}{Vector of specific cash flow statement keys to include (default all)
+See \code{valid_cashflow_keys} for available options.}
 
 \item{pretty}{Format column names to be more readable (default TRUE)}
 
-\item{wide}{Return data in wide format (default TRUE)}
+\item{wide}{Return data in wide format with dates as columns (default TRUE).
+If FALSE, returns data in long format with a date column.}
 
-\item{proxy}{Optional proxy settings}
+\item{proxy}{Optional proxy settings for the request}
 
 \item{output}{Object to return. Can be "tibble", "response", or "request" (default "tibble")}
 }
@@ -40,8 +42,23 @@ Either a tibble with cash flow statement data, an httr2 response object, or an h
 depending on the value of the output argument.
 }
 \description{
-Get cash flow statement for a ticker
+Retrieves cash flow statement data from Yahoo Finance for a specified ticker symbol.
+Cash flow statements show how changes in balance sheet accounts and income affect
+cash and cash equivalents, breaking the analysis down to operating, investing, and
+financing activities.
 }
+\section{Available Cashflow Keys}{
+
+
+Examples:
+\itemize{
+\item OperatingCashFlow
+\item FreeCashFlow
+}
+
+See \code{valid_cashflow_keys} for a full list of available cashflow keys.
+}
+
 \examples{
 \dontrun{
 apple <- get_tickers("AAPL")
@@ -51,5 +68,27 @@ cash_flow <- get_cashflow(apple)
 
 # Get quarterly cash flow statement
 quarterly_cash_flow <- get_cashflow(apple, freq = "quarterly")
+
+# Get specific cash flow items
+operating_cash <- get_cashflow(apple,
+  cashflow_keys = c("OperatingCashFlow", "FreeCashFlow")
+)
+
+# Get data for a specific time period
+cash_2020_2022 <- get_cashflow(apple,
+  start = "2020-01-01",
+  end = "2022-12-31"
+)
+
+# Error handling example
+tryCatch(
+  {
+    cash_flow <- get_cashflow("INVALID_TICKER")
+  },
+  error = function(e) {
+    message("Error retrieving cash flow data: ", e$message)
+    # Handle the error appropriately
+  }
+)
 }
 }
