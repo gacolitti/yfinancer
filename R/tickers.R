@@ -104,7 +104,7 @@ get_tickers <- function(..., proxy = NULL) {
   # If any symbols were invalid, warn the user
   invalid_symbols <- validated$symbol[!validated$isValid]
   if (length(invalid_symbols) > 0) {
-    warning(sprintf("Invalid ticker symbol(s): %s", paste(invalid_symbols, collapse = ", ")))
+    rlang::warn(sprintf("Invalid ticker symbol(s): %s", paste(invalid_symbols, collapse = ", ")))
   }
 
   # Single ticker case

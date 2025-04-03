@@ -93,7 +93,7 @@ tryCatch(
     financials <- get_financials("INVALID_TICKER")
   },
   error = function(e) {
-    message("Error retrieving financial data: ", e$message)
+    rlang::inform("Error retrieving financial data: ", e$message)
     # Handle the error appropriately
   }
 )

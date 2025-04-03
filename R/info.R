@@ -878,6 +878,9 @@ get_info <- function(ticker,
     ticker <- get_tickers(ticker, proxy = proxy)
   }
 
+  # Load valid_modules dataset
+  utils::data("valid_modules", envir = environment(), package = "yfinancer")
+
   # Filter modules for selected ones
   modules <- modules[modules %in% valid_modules]
 

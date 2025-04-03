@@ -86,7 +86,7 @@ tryCatch(
     cash_flow <- get_cashflow("INVALID_TICKER")
   },
   error = function(e) {
-    message("Error retrieving cash flow data: ", e$message)
+    rlang::inform("Error retrieving cash flow data: ", e$message)
     # Handle the error appropriately
   }
 )

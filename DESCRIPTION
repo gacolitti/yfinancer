@@ -28,7 +28,8 @@ Imports:
     rlang,
     stringr,
     tidyr,
-    glue
+    glue,
+    utils
 Depends: 
     R (>= 3.5)
 LazyData: true
