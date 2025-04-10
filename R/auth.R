@@ -6,7 +6,7 @@
 #' @keywords internal
 get_a1_cookie <- function() {
   # Check if curl_chrome110 is available
-  if (system("which curl_chrome110", ignore.stdout = TRUE) != 0) {
+  if (nchar(Sys.which("curl_chrome110")) == 0) {
     rlang::abort("curl_chrome110 command not found. Please install it to use this feature.")
   }
 
