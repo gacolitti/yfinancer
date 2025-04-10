@@ -3,9 +3,7 @@ Title: Yahoo Finance API Wrapper
 Version: 0.1.2.9000
 Authors@R: 
     person("Giovanni", "Colitti", email = "g.a.colitti@gmail.com", role = c("aut", "cre", "cph"))
-Description: A comprehensive wrapper for Yahoo Finance's API in R. This package 
-    allows users to download financial market data, access company information, 
-    financial statements, options data, and more from Yahoo Finance.
+Description: Download financial market data, access company information, financial statements, options data, and more from Yahoo Finance.
 License: MIT + file LICENSE
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
