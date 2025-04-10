@@ -2,7 +2,6 @@
 
 S3method(print,yf_ticker)
 S3method(print,yf_tickers)
-export(clean_names)
 export(get_balance_sheet)
 export(get_cashflow)
 export(get_financials)

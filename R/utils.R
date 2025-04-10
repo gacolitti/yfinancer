@@ -46,7 +46,7 @@ as_timestamp <- function(x, default = NULL) {
 #' @param minus_to_underscore By default `-` is replaced with `minus`.
 #'   This argument replaces the hyphen with `_` (underscore) instead.
 #'
-#' @export
+#' @keywords internal
 clean_names <- function(.data,
                         unique = FALSE,
                         minus_to_underscore = FALSE) {
