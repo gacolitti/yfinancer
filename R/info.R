@@ -840,6 +840,27 @@ process_nested_cols <- function(tibble, prefix = NULL) {
 #'
 #' See `valid_modules` for a complete list of available modules.
 #'
+#' @section Authentication:
+#' This function requires authentication via two components:
+#'
+#' - **A1 Cookie**: Session identifier
+#' - **Crumb**: Security token
+#'
+#' Authentication methods (in order of priority):
+#'
+#' 1. Environment variables: `YFINANCE_CRUMB` and `YFINANCE_A1`
+#' 2. Saved auth file: `~/.yfinance/auth`
+#' 3. Auto-generated using curl-impersonate (requires installation)
+#'
+#' Example:
+#' ```r
+#' Sys.setenv(YFINANCE_CRUMB = "your-crumb")
+#' Sys.setenv(YFINANCE_A1 = "your-a1-cookie")
+#' ```
+#'
+#' See https://github.com/lwthiker/curl-impersonate for curl-impersonate installation.
+#' Option 3 above expects `curl_chrome110` to be installed and available in the system path.
+#'
 #' @examples
 #' \dontrun{
 #' # Get a single ticker

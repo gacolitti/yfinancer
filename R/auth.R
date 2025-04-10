@@ -7,7 +7,12 @@
 get_a1_cookie <- function() {
   # Check if curl_chrome110 is available
   if (nchar(Sys.which("curl_chrome110")) == 0) {
-    rlang::abort("curl_chrome110 command not found. Please install it to use this feature.")
+    rlang::abort(
+      paste0(
+        "curl_chrome110 command not found and is required for automatic authentication. ",
+        "See ?get_info for details."
+      )
+    )
   }
 
   # Use curl_chrome110 to get the A1 token cookie
