@@ -1,7 +1,7 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-# yfinancer <a href="github.com/gacolitti/yfinancer"><img src="man/figures/logo.png" align="right" height="160" /></a>
+# yfinancer <a href="https://github.com/gacolitti/yfinancer"><img src="man/figures/logo.png" align="right" height="160" /></a>
 
 `yfinancer` provides access to Yahoo Finance’s API for retrieving market
 data. The package includes functions for downloading historical price
@@ -19,12 +19,19 @@ coverage](https://codecov.io/gh/gacolitti/yfinancer/graph/badge.svg)](https://ap
 
 ## Installation
 
+You can install the released version of yfinancer from
+[CRAN](https://CRAN.R-project.org) with:
+
+``` r
+install.packages("yfinancer")
+```
+
 You can install the development version of yfinancer from
 [GitHub](https://github.com/) with:
 
 ``` r
-# install.packages("pak")
-pak::pak("gacolitti/yfinancer")
+# install.packages("devtools")
+devtools::install_github("gacolitti/yfinancer")
 ```
 
 ## Usage Examples

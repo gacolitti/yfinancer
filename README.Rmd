@@ -28,11 +28,17 @@ tidy tibble format.
 
 ## Installation
 
+You can install the released version of yfinancer from [CRAN](https://CRAN.R-project.org) with:
+
+```r
+install.packages("yfinancer")
+```
+
 You can install the development version of yfinancer from [GitHub](https://github.com/) with:
 
 ```r
-# install.packages("pak")
-pak::pak("gacolitti/yfinancer")
+# install.packages("devtools")
+devtools::install_github("gacolitti/yfinancer")
 ```
 
 ## Usage Examples
