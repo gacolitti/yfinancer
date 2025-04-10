@@ -1,11 +1,3 @@
-#' Get a random user agent
-#'
-#' @return A character string of a random user agent
-get_user_agent <- function() {
-  sample(user_agents, 1)
-}
-
-
 #' Add headers to a request
 #'
 #' @param req Request object
