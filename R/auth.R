@@ -84,7 +84,7 @@ read_auth_file <- function(path = NULL, refresh = FALSE) {
     path <- file.path(config_dir, "auth")
   }
 
-  if (refresh) {
+  if (refresh && file.exists(path)) {
     file.remove(path)
   }
 
@@ -168,7 +168,6 @@ req_add_auth <- function(req, proxy = NULL, refresh = FALSE, path = NULL) {
 #' @keywords internal
 should_message <- function(msg, interval = 8, timestamp_file = NULL) {
   # Use a tempfile for tracking message timing
-  # This creates a unique temporary file that persists across R sessions
   if (is.null(timestamp_file)) timestamp_file <- "yfinancer_message_timestamp"
   temp_dir <- tempdir()
   timestamp_file <- file.path(temp_dir, timestamp_file)
