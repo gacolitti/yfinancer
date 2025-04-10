@@ -3,11 +3,9 @@
 
 # yfinancer <a href="https://github.com/gacolitti/yfinancer"><img src="man/figures/logo.png" align="right" height="160" /></a>
 
-`yfinancer` provides access to Yahoo Finance’s API for retrieving market
-data. The package includes functions for downloading historical price
-data, accessing company information, retrieving financial statements,
-and searching for tickers. It handles API interactions, data parsing,
-and returns results in tidy tibble format.
+`yfinancer` provides access to Yahoo Finance’s API, offering functions
+to download historical prices, company information, and financial
+statements.
 
 <!-- badges: start -->
 
@@ -27,7 +25,7 @@ install.packages("yfinancer")
 ```
 
 You can install the development version of yfinancer from
-[GitHub](https://github.com/) with:
+[GitHub](https://github.com/gacolitti/yfinancer) with:
 
 ``` r
 # install.packages("devtools")
@@ -145,40 +143,33 @@ Currently, only the `get_info()` function requires authentication.
 `yfinancer` provides access to the following information:
 
 1.  **Ticker Functions**: Access single ticker data
-    - ✅ Historical market data (OHLCV)
-    - ✅ Basic company information
-    - ✅ Financial statements (income statement, balance sheet, cash
-      flow)
-    - ✅ Dividends and stock splits
-    - ✅ Options data
-    - ✅ Analyst recommendations and price targets
-    - ✅ News
+    - Historical market data (OHLCV)
+    - Basic company information
+    - Financial statements (income statement, balance sheet, cash flow)
+    - Dividends and stock splits
+    - Options data
+    - Analyst recommendations and price targets
+    - News
 2.  **Market Information**:
-    - ✅ Company profile and asset information
-    - ✅ Key statistics (PE, EPS, EBITDA, enterprise value, etc.)
-    - ✅ Financial KPIs (revenue, margins, cash flow metrics)
-    - ✅ Future earnings dates and earnings history
-    - ✅ ESG scores (environmental, social, governance metrics)
-    - ✅ Ownership data (insider, institutional, fund)
-    - ✅ Insider transactions
-    - ✅ Analyst recommendations and upgrade/downgrade history
-    - ✅ SEC filings
-    - ✅ And more (over 30 different data modules available)
+    - Company profile and asset information
+    - Key statistics (PE, EPS, EBITDA, enterprise value, etc.)
+    - Financial KPIs (revenue, margins, cash flow metrics)
+    - Future earnings dates and earnings history
+    - ESG scores (environmental, social, governance metrics)
+    - Ownership data (insider, institutional, fund)
+    - Insider transactions
+    - Analyst recommendations and upgrade/downgrade history
+    - SEC filings
+    - And more (over 30 different data modules available)
 3.  **Search Functionality**:
-    - ✅ Search for quotes
-    - ✅ Get news from search
-4.  **Screener Tools**:
-    - ⬜ Build equity and fund queries
-    - ⬜ Screen market based on criteria
+    - Search for quotes
+    - Get news from search
 
 ## Legal Disclaimer
 
 Yahoo!, Y!Finance, and Yahoo! Finance are registered trademarks of
-Yahoo, Inc.
-
-yfinancer is not affiliated, endorsed, or vetted by Yahoo, Inc. It’s an
-open-source tool that uses Yahoo’s publicly available APIs, and is
-intended for research and educational purposes.
-
-Users should refer to Yahoo!’s terms of use for details on rights to use
-the actual data downloaded.
+Yahoo, Inc. yfinancer is not affiliated, endorsed, or vetted by Yahoo,
+Inc. It’s an open-source tool that uses Yahoo’s publicly available APIs,
+and is intended for research and educational purposes. Users should
+refer to Yahoo!’s terms of use for details on rights to use the actual
+data downloaded.
