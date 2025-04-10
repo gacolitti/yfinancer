@@ -1,6 +1,6 @@
 Package: yfinancer
 Title: 'Yahoo Finance' API Wrapper
-Version: 0.1.2.9000
+Version: 0.1.3
 Authors@R: 
     person("Giovanni", "Colitti", email = "g.a.colitti@gmail.com", role = c("aut", "cre", "cph"))
 Description: Download financial market data, company information, financial statements, options data, and more from the unofficial 'Yahoo Finance' API.
