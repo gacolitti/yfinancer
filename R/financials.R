@@ -287,17 +287,6 @@ get_balance_sheet <- function(ticker, freq = c("annual", "quarterly"),
 #'   start = "2020-01-01",
 #'   end = "2022-12-31"
 #' )
-#'
-#' # Error handling example
-#' tryCatch(
-#'   {
-#'     cash_flow <- get_cashflow("INVALID_TICKER")
-#'   },
-#'   error = function(e) {
-#'     rlang::inform("Error retrieving cash flow data: ", e$message)
-#'     # Handle the error appropriately
-#'   }
-#' )
 #' }
 #' @export
 get_cashflow <- function(ticker, freq = c("annual", "quarterly"),
@@ -497,22 +486,6 @@ process_timeseries_data <- function(result_data, pretty = TRUE, wide = TRUE) {
 #'   start = "2020-01-01",
 #'   end = "2022-12-31"
 #' )
-#'
-#' # Error handling for all financial statements
-#' tryCatch(
-#'   {
-#'     financials <- get_financials("INVALID_TICKER")
-#'   },
-#'   error = function(e) {
-#'     rlang::inform("Error retrieving financial data: ", e$message)
-#'     # Handle the error appropriately
-#'   }
-#' )
-#'
-#' # Using a proxy to avoid rate limiting
-#' # Assuming you have a proxy service set up
-#' proxy_url <- "http://your-proxy-server:port"
-#' financials_with_proxy <- get_financials(apple, proxy = proxy_url)
 #' }
 #' @export
 get_financials <- function(ticker, freq = "annual",

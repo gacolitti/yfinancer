@@ -5,6 +5,10 @@
 #'
 #' @param symbols A character vector of ticker symbols to validate
 #' @return A tibble with validation results for each symbol
+#' @examples
+#' \dontrun{
+#' validate_tickers(c("AAPL", "MSFT", "GOOG"))
+#' }
 #' @export
 validate_tickers <- function(symbols = NULL) {
   if (all(!nzchar(symbols))) {
