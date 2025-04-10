@@ -1,5 +1,5 @@
 Package: yfinancer
-Title: Yahoo Finance API for R
+Title: Yahoo Finance API Wrapper
 Version: 0.1.2.9000
 Authors@R: 
     person("Giovanni", "Colitti", email = "g.a.colitti@gmail.com", role = c("aut", "cre", "cph"))
