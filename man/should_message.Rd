@@ -4,14 +4,14 @@
 \alias{should_message}
 \title{Control message frequency}
 \usage{
-should_message(msg, interval = 8, path = NULL)
+should_message(msg, interval = 8, timestamp_file = NULL)
 }
 \arguments{
 \item{msg}{The message to display}
 
 \item{interval}{Time interval in hours between showing messages}
 
-\item{path}{Path to the authentication file}
+\item{timestamp_file}{Name used to ID the timestamp file (defaults to a tempfile)}
 }
 \value{
 NULL invisibly

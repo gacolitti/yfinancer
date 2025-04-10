@@ -16,3 +16,8 @@ A tibble with validation results for each symbol
 This function validates whether given ticker symbols are valid
 by making an API request to Yahoo Finance's validation endpoint.
 }
+\examples{
+\dontrun{
+validate_tickers(c("AAPL", "MSFT", "GOOG"))
+}
+}

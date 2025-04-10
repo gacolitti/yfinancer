@@ -6,8 +6,13 @@
 #' @keywords internal
 get_a1_cookie <- function() {
   # Check if curl_chrome110 is available
-  if (system("which curl_chrome110", ignore.stdout = TRUE) != 0) {
-    rlang::abort("curl_chrome110 command not found. Please install it to use this feature.")
+  if (nchar(Sys.which("curl_chrome110")) == 0) {
+    rlang::abort(
+      paste0(
+        "curl_chrome110 command not found and is required for automatic authentication. ",
+        "See ?get_info for details."
+      )
+    )
   }
 
   # Use curl_chrome110 to get the A1 token cookie
@@ -18,7 +23,7 @@ get_a1_cookie <- function() {
 
   # If no A1 cookie was found, return NULL
   if (length(a1_lines) == 0) {
-    warning("No A1 cookie found in Yahoo Finance response")
+    rlang::warn("No A1 cookie found in Yahoo Finance response")
     return(NULL)
   }
 
@@ -59,7 +64,7 @@ get_crumb <- function(a1_cookie, proxy = NULL) {
       crumb
     },
     error = function(e) {
-      warning(sprintf("Failed to get crumb: %s", e$message))
+      rlang::warn(sprintf("Failed to get crumb: %s", e$message))
       NULL
     }
   )
@@ -72,16 +77,19 @@ get_crumb <- function(a1_cookie, proxy = NULL) {
 #' @return NULL
 #' @keywords internal
 read_auth_file <- function(path = NULL, refresh = FALSE) {
-  if (is.null(path)) {
-    path <- "~/.yfinance/auth"
-  }
   # Check if the file exists
-  if (!file.exists(path)) {
-    message("No authentication file found.")
+  if (!is.null(path) && !file.exists(path)) {
+    rlang::warn(paste0("No authentication file found at ", path))
     return(NULL)
   }
 
-  if (refresh) {
+  if (is.null(path)) {
+    # Use R's standard location for package config files
+    config_dir <- tools::R_user_dir("yfinancer", which = "cache")
+    path <- file.path(config_dir, "auth")
+  }
+
+  if (refresh && file.exists(path)) {
     file.remove(path)
   }
 
@@ -98,7 +106,7 @@ read_auth_file <- function(path = NULL, refresh = FALSE) {
   # Check if the file is complete if it exists
   if (!is.null(json)) {
     if (all(c("a1_cookie", "crumb") %in% names(json))) {
-      should_message("Using existing authentication file.", path = dirname(path))
+      should_message("Using existing authentication file.", timestamp_file = "yfinancer_auth_message_timestamp")
       return(json)
     }
   }
@@ -110,7 +118,7 @@ read_auth_file <- function(path = NULL, refresh = FALSE) {
   auth_data <- list(a1_cookie = a1_cookie, crumb = crumb)
 
   # Write the authentication details to the file
-  message("Creating authentication file at ", path)
+  rlang::inform("Creating authentication file at ", path)
   dir.create(dirname(path), showWarnings = FALSE, recursive = TRUE)
   jsonlite::write_json(auth_data, path)
   auth_data
@@ -135,9 +143,8 @@ req_add_auth <- function(req, proxy = NULL, refresh = FALSE, path = NULL) {
 
   # If both environment variables are available, use them
   if (!is.na(env_crumb) && !is.na(env_a1)) {
-    should_message(
-      "Using environment variables for authentication.",
-      path = if (is.null(path)) NULL else dirname(path)
+    should_message("Using environment variables for authentication.",
+      timestamp_file = "yfinancer_env_message_timestamp"
     )
     return(
       req |>
@@ -161,16 +168,14 @@ req_add_auth <- function(req, proxy = NULL, refresh = FALSE, path = NULL) {
 #'
 #' @param msg The message to display
 #' @param interval Time interval in hours between showing messages
-#' @param path Path to the authentication file
+#' @param timestamp_file Name used to ID the timestamp file (defaults to a tempfile)
 #' @return NULL invisibly
 #' @keywords internal
-should_message <- function(msg, interval = 8, path = NULL) {
-  if (is.null(path)) {
-    path <- "~/.yfinance"
-  }
-  # Path to the timestamp file
-  timestamp_file <- file.path(path, "last_message_time")
-  dir.create(path, showWarnings = FALSE, recursive = TRUE)
+should_message <- function(msg, interval = 8, timestamp_file = NULL) {
+  # Use a tempfile for tracking message timing
+  if (is.null(timestamp_file)) timestamp_file <- "yfinancer_message_timestamp"
+  temp_dir <- tempdir()
+  timestamp_file <- file.path(temp_dir, timestamp_file)
 
   current_time <- Sys.time()
   can_message <- TRUE
@@ -198,7 +203,7 @@ should_message <- function(msg, interval = 8, path = NULL) {
   # If we can show a message, update the timestamp file and display the message
   if (can_message) {
     writeLines(as.character(current_time), timestamp_file)
-    message(msg)
+    rlang::inform(msg)
   }
 
   invisible(NULL)

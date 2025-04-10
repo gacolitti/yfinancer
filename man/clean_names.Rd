@@ -20,3 +20,4 @@ Returns vector if vector or data.frame if data.frame.
 \description{
 Clean table or vector of names
 }
+\keyword{internal}
