@@ -2,6 +2,7 @@
 #' @param timestamp Unix timestamp in seconds (can be a vector)
 #' @return A POSIXct object or vector of POSIXct objects
 #' @keywords internal
+#' @noRd
 unix_to_datetime <- function(timestamp) {
   if (is.null(timestamp)) {
     return(NA)
@@ -26,6 +27,7 @@ unix_to_datetime <- function(timestamp) {
 #' @param default Default value to return if x is NULL
 #' @return Unix timestamp in seconds
 #' @keywords internal
+#' @noRd
 as_timestamp <- function(x, default = NULL) {
   if (is.null(x)) {
     return(default)
@@ -47,6 +49,7 @@ as_timestamp <- function(x, default = NULL) {
 #'   This argument replaces the hyphen with `_` (underscore) instead.
 #'
 #' @keywords internal
+#' @noRd
 clean_names <- function(.data,
                         unique = FALSE,
                         minus_to_underscore = FALSE) {
@@ -96,6 +99,7 @@ clean_names <- function(.data,
 #' @param default A default value to return if timestamp is NULL
 #' @return A unix timestamp. Default is current time.
 #' @keywords internal
+#' @noRd
 process_timestamp_arg <- function(timestamp = NULL, default = NULL) {
   if (is.numeric(timestamp)) {
     return(timestamp)
@@ -129,6 +133,7 @@ process_timestamp_arg <- function(timestamp = NULL, default = NULL) {
 #' @param y Fallback value if x is NULL
 #' @return x if not NULL, otherwise y
 #' @keywords internal
+#' @noRd
 `%||%` <- function(x, y) {
   if (is.null(x)) y else x
 }
@@ -137,6 +142,7 @@ process_timestamp_arg <- function(timestamp = NULL, default = NULL) {
 #' @param x String to capitalize
 #' @return String with first letter capitalized
 #' @keywords internal
+#' @noRd
 capitalize <- function(x) {
   substr(x, 1, 1) <- toupper(substr(x, 1, 1))
   x

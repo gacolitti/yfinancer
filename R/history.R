@@ -1,5 +1,6 @@
 #' Build request parameters for history API
 #' @keywords internal
+#' @noRd
 build_history_params <- function(interval, prepost, period, start, end) {
   # Parameters for API request
   params <- list(
@@ -21,6 +22,7 @@ build_history_params <- function(interval, prepost, period, start, end) {
 
 #' Extract and validate chart data from response
 #' @keywords internal
+#' @noRd
 extract_chart_data <- function(resp_json) {
   # Extract chart data
   chart_result <- resp_json$chart$result
@@ -41,6 +43,7 @@ extract_chart_data <- function(resp_json) {
 
 #' Create historical data frame from chart result
 #' @keywords internal
+#' @noRd
 create_historical_df <- function(chart_result) {
   timestamps <- unlist(chart_result[[1]]$timestamp)
   quote <- chart_result[[1]]$indicators$quote[[1]]
@@ -59,6 +62,7 @@ create_historical_df <- function(chart_result) {
 
 #' Apply price adjustments to data
 #' @keywords internal
+#' @noRd
 apply_adjustments <- function(data, chart_result, auto_adjust, back_adjust) {
   if (!auto_adjust || !("adjclose" %in% names(chart_result[[1]]$indicators))) {
     return(data)
@@ -92,6 +96,7 @@ apply_adjustments <- function(data, chart_result, auto_adjust, back_adjust) {
 
 #' Add dividends and splits to data frame
 #' @keywords internal
+#' @noRd
 add_events <- function(data, chart_result) {
   if (!("events" %in% names(chart_result[[1]]))) {
     return(data)
@@ -142,6 +147,7 @@ add_events <- function(data, chart_result) {
 
 #' Repair missing data in time series
 #' @keywords internal
+#' @noRd
 repair_data <- function(data, repair = TRUE) {
   if (!repair) {
     return(data)

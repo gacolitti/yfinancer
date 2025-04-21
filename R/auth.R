@@ -4,6 +4,7 @@
 #'
 #' @return A1 cookie string or NULL if not found
 #' @keywords internal
+#' @noRd
 get_a1_cookie <- function() {
   # Check if curl_chrome110 is available
   if (nchar(Sys.which("curl_chrome110")) == 0) {
@@ -38,6 +39,7 @@ get_a1_cookie <- function() {
 #' @param proxy Optional proxy settings
 #' @return Crumb string or NULL if not found
 #' @keywords internal
+#' @noRd
 get_crumb <- function(a1_cookie, proxy = NULL) {
   req_crumb <- httr2::request("https://query2.finance.yahoo.com/v1/test/getcrumb") |>
     httr2::req_headers(
@@ -76,6 +78,7 @@ get_crumb <- function(a1_cookie, proxy = NULL) {
 #' @param refresh Whether to refresh the auth file
 #' @return NULL
 #' @keywords internal
+#' @noRd
 read_auth_file <- function(path = NULL, refresh = FALSE) {
   # Check if the file exists
   if (!is.null(path) && !file.exists(path)) {
@@ -136,6 +139,7 @@ read_auth_file <- function(path = NULL, refresh = FALSE) {
 #' @param path Path to authentication file. Default is ~/.yfinance/auth
 #' @return Request object with added authentication
 #' @keywords internal
+#' @noRd
 req_add_auth <- function(req, proxy = NULL, refresh = FALSE, path = NULL) {
   # First check for environment variables
   env_crumb <- Sys.getenv("YFINANCE_CRUMB", NA_character_)
@@ -171,6 +175,7 @@ req_add_auth <- function(req, proxy = NULL, refresh = FALSE, path = NULL) {
 #' @param timestamp_file Name used to ID the timestamp file (defaults to a tempfile)
 #' @return NULL invisibly
 #' @keywords internal
+#' @noRd
 should_message <- function(msg, interval = 8, timestamp_file = NULL) {
   # Use a tempfile for tracking message timing
   if (is.null(timestamp_file)) timestamp_file <- "yfinancer_message_timestamp"

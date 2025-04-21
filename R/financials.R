@@ -367,6 +367,7 @@ get_cashflow <- function(ticker, freq = c("annual", "quarterly"),
 #' @param result_data List of timeseries results
 #' @return A tidy tibble with processed timeseries data
 #' @keywords internal
+#' @noRd
 process_timeseries_data <- function(result_data, pretty = TRUE, wide = TRUE) {
   # If no data, return empty tibble
   if (length(result_data) == 0) {
