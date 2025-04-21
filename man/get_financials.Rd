@@ -86,21 +86,5 @@ financials_2020_2022 <- get_financials(apple,
   start = "2020-01-01",
   end = "2022-12-31"
 )
-
-# Error handling for all financial statements
-tryCatch(
-  {
-    financials <- get_financials("INVALID_TICKER")
-  },
-  error = function(e) {
-    message("Error retrieving financial data: ", e$message)
-    # Handle the error appropriately
-  }
-)
-
-# Using a proxy to avoid rate limiting
-# Assuming you have a proxy service set up
-proxy_url <- "http://your-proxy-server:port"
-financials_with_proxy <- get_financials(apple, proxy = proxy_url)
 }
 }

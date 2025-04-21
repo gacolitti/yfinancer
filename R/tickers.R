@@ -104,7 +104,7 @@ get_tickers <- function(..., proxy = NULL) {
   # If any symbols were invalid, warn the user
   invalid_symbols <- validated$symbol[!validated$isValid]
   if (length(invalid_symbols) > 0) {
-    warning(sprintf("Invalid ticker symbol(s): %s", paste(invalid_symbols, collapse = ", ")))
+    rlang::warn(sprintf("Invalid ticker symbol(s): %s", paste(invalid_symbols, collapse = ", ")))
   }
 
   # Single ticker case
@@ -164,20 +164,28 @@ get_tickers <- function(..., proxy = NULL) {
 get_tickers_info <- function(tickers_obj, modules = "summaryProfile", output = c("tibble", "response", "request"), proxy = NULL) {
   output <- rlang::arg_match(output)
 
-  if (!inherits(tickers_obj, "yf_tickers")) {
-    rlang::abort("tickers_obj must be a yf_tickers object created with get_tickers()")
+  if (!inherits(tickers_obj, "yf_tickers") && !inherits(tickers_obj, "yf_ticker")) {
+    rlang::abort("tickers_obj must be a yf_tickers or yf_ticker object created with get_tickers()")
+  }
+
+  if (inherits(tickers_obj, "yf_ticker")) {
+    tickers <- list(tickers_obj)
+    symbols <- tickers_obj$symbol
+  } else {
+    tickers <- tickers_obj$tickers
+    symbols <- tickers_obj$symbols
   }
 
   # Get info for each ticker
   info_list <- purrr::map(
-    tickers_obj$tickers,
+    tickers,
     function(ticker) {
       get_info(ticker, modules = modules, output = output, proxy = proxy)
     }
   )
 
   # Name the list with ticker symbols
-  names(info_list) <- tickers_obj$symbols
+  names(info_list) <- symbols
 
   info_list
 }
@@ -210,12 +218,20 @@ get_tickers_history <- function(tickers_obj,
                                 proxy = NULL) {
   output <- rlang::arg_match(output)
 
-  if (!inherits(tickers_obj, "yf_tickers")) {
-    rlang::abort("tickers_obj must be a yf_tickers object created with get_tickers()")
+  if (!inherits(tickers_obj, "yf_tickers") && !inherits(tickers_obj, "yf_ticker")) {
+    rlang::abort("tickers_obj must be a yf_tickers or yf_ticker object created with get_tickers()")
+  }
+
+  if (inherits(tickers_obj, "yf_ticker")) {
+    tickers <- list(tickers_obj)
+    symbols <- tickers_obj$symbol
+  } else {
+    tickers <- tickers_obj$tickers
+    symbols <- tickers_obj$symbols
   }
 
   # Get history for each ticker
-  history_list <- purrr::map(tickers_obj$tickers, function(ticker) {
+  history_list <- purrr::map(tickers, function(ticker) {
     get_history(
       ticker,
       period = period,
@@ -232,7 +248,7 @@ get_tickers_history <- function(tickers_obj,
   })
 
   # Name the list with ticker symbols
-  names(history_list) <- tickers_obj$symbols
+  names(history_list) <- symbols
 
   history_list
 }
@@ -260,13 +276,21 @@ get_tickers_income_statement <- function(tickers_obj, freq = c("annual", "quarte
   output <- rlang::arg_match(output)
   freq <- rlang::arg_match(freq)
 
-  if (!inherits(tickers_obj, "yf_tickers")) {
-    rlang::abort("tickers_obj must be a yf_tickers object created with get_tickers()")
+  if (!inherits(tickers_obj, "yf_tickers") && !inherits(tickers_obj, "yf_ticker")) {
+    rlang::abort("tickers_obj must be a yf_tickers or yf_ticker object created with get_tickers()")
+  }
+
+  if (inherits(tickers_obj, "yf_ticker")) {
+    tickers <- list(tickers_obj)
+    symbols <- tickers_obj$symbol
+  } else {
+    tickers <- tickers_obj$tickers
+    symbols <- tickers_obj$symbols
   }
 
   # Get income statement for each ticker
   income_list <- purrr::map(
-    tickers_obj$tickers,
+    tickers,
     function(ticker) {
       get_income_statement(
         ticker,
@@ -283,7 +307,7 @@ get_tickers_income_statement <- function(tickers_obj, freq = c("annual", "quarte
   )
 
   # Name the list with ticker symbols
-  names(income_list) <- tickers_obj$symbols
+  names(income_list) <- symbols
 
   income_list
 }
@@ -312,8 +336,16 @@ get_tickers_balance_sheet <- function(tickers_obj, freq = c("annual", "quarterly
   output <- rlang::arg_match(output)
   freq <- rlang::arg_match(freq)
 
-  if (!inherits(tickers_obj, "yf_tickers")) {
-    rlang::abort("tickers_obj must be a yf_tickers object created with get_tickers()")
+  if (!inherits(tickers_obj, "yf_tickers") && !inherits(tickers_obj, "yf_ticker")) {
+    rlang::abort("tickers_obj must be a yf_tickers or yf_ticker object created with get_tickers()")
+  }
+
+  if (inherits(tickers_obj, "yf_ticker")) {
+    tickers <- list(tickers_obj)
+    symbols <- tickers_obj$symbol
+  } else {
+    tickers <- tickers_obj$tickers
+    symbols <- tickers_obj$symbols
   }
 
   # Get balance sheet for each ticker
@@ -335,7 +367,7 @@ get_tickers_balance_sheet <- function(tickers_obj, freq = c("annual", "quarterly
   )
 
   # Name the list with ticker symbols
-  names(balance_list) <- tickers_obj$symbols
+  names(balance_list) <- symbols
 
   balance_list
 }
@@ -365,13 +397,21 @@ get_tickers_cashflow <- function(tickers_obj, freq = c("annual", "quarterly"),
   output <- rlang::arg_match(output)
   freq <- rlang::arg_match(freq)
 
-  if (!inherits(tickers_obj, "yf_tickers")) {
-    rlang::abort("tickers_obj must be a yf_tickers object created with get_tickers()")
+  if (!inherits(tickers_obj, "yf_tickers") && !inherits(tickers_obj, "yf_ticker")) {
+    rlang::abort("tickers_obj must be a yf_tickers or yf_ticker object created with get_tickers()")
+  }
+
+  if (inherits(tickers_obj, "yf_ticker")) {
+    tickers <- list(tickers_obj)
+    symbols <- tickers_obj$symbol
+  } else {
+    tickers <- tickers_obj$tickers
+    symbols <- tickers_obj$symbols
   }
 
   # Get cash flow statement for each ticker
   cashflow_list <- purrr::map(
-    tickers_obj$tickers,
+    tickers,
     function(ticker) {
       get_cashflow(
         ticker,
@@ -388,7 +428,7 @@ get_tickers_cashflow <- function(tickers_obj, freq = c("annual", "quarterly"),
   )
 
   # Name the list with ticker symbols
-  names(cashflow_list) <- tickers_obj$symbols
+  names(cashflow_list) <- symbols
 
   cashflow_list
 }
@@ -411,13 +451,21 @@ get_tickers_financials <- function(tickers_obj, freq = c("annual", "quarterly"),
   output <- rlang::arg_match(output)
   freq <- rlang::arg_match(freq)
 
-  if (!inherits(tickers_obj, "yf_tickers")) {
-    rlang::abort("tickers_obj must be a yf_tickers object created with get_tickers()")
+  if (!inherits(tickers_obj, "yf_tickers") && !inherits(tickers_obj, "yf_ticker")) {
+    rlang::abort("tickers_obj must be a yf_tickers or yf_ticker object created with get_tickers()")
+  }
+
+  if (inherits(tickers_obj, "yf_ticker")) {
+    tickers <- list(tickers_obj)
+    symbols <- tickers_obj$symbol
+  } else {
+    tickers <- tickers_obj$tickers
+    symbols <- tickers_obj$symbols
   }
 
   # Get financial statements for each ticker
   financials_list <- purrr::map(
-    tickers_obj$tickers,
+    tickers,
     function(ticker) {
       get_financials(
         ticker,
@@ -436,7 +484,7 @@ get_tickers_financials <- function(tickers_obj, freq = c("annual", "quarterly"),
   )
 
   # Name the list with ticker symbols
-  names(financials_list) <- tickers_obj$symbols
+  names(financials_list) <- symbols
 
   financials_list
 }

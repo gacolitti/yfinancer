@@ -57,6 +57,31 @@ Common modules include:
 See \code{valid_modules} for a complete list of available modules.
 }
 
+\section{Authentication}{
+
+This function requires authentication via two components:
+\itemize{
+\item \strong{A1 Cookie}: Session identifier
+\item \strong{Crumb}: Security token
+}
+
+Authentication methods (in order of priority):
+\enumerate{
+\item Environment variables: \code{YFINANCE_CRUMB} and \code{YFINANCE_A1}
+\item Saved auth file: \verb{~/.yfinance/auth}
+\item Auto-generated using curl-impersonate (requires installation)
+}
+
+Example:
+
+\if{html}{\out{<div class="sourceCode r">}}\preformatted{Sys.setenv(YFINANCE_CRUMB = "your-crumb")
+Sys.setenv(YFINANCE_A1 = "your-a1-cookie")
+}\if{html}{\out{</div>}}
+
+See https://github.com/lwthiker/curl-impersonate for curl-impersonate installation.
+Option 3 above expects \code{curl_chrome110} to be installed and available in the system path.
+}
+
 \examples{
 \dontrun{
 # Get a single ticker

@@ -67,6 +67,7 @@ get_income_statement <- function(ticker, freq = c("annual", "quarterly"),
                                  income_keys = NULL, pretty = TRUE, wide = TRUE, proxy = NULL, output = c("tibble", "response", "request")) {
   output <- rlang::arg_match(output)
   freq <- rlang::arg_match(freq)
+  utils::data("valid_income_keys", envir = environment(), package = "yfinancer")
   if (!is.null(income_keys) && !all(income_keys %in% valid_income_keys)) {
     rlang::abort(glue::glue("Invalid income statement keys: {income_keys}. See yfinance::income_keys for valid options."))
   }
@@ -118,7 +119,7 @@ get_income_statement <- function(ticker, freq = c("annual", "quarterly"),
 
   # Check if we have valid data
   if (is.null(resp_json$timeseries) || is.null(resp_json$timeseries$result) || length(resp_json$timeseries$result) == 0) {
-    warning(sprintf("No income statement data available for %s", ticker$symbol))
+    rlang::warn(sprintf("No income statement data available for %s", ticker$symbol))
     return(dplyr::tibble())
   }
 
@@ -179,6 +180,7 @@ get_balance_sheet <- function(ticker, freq = c("annual", "quarterly"),
                               pretty = TRUE, wide = TRUE, proxy = NULL, output = c("tibble", "response", "request")) {
   output <- rlang::arg_match(output)
   freq <- rlang::arg_match(freq)
+  utils::data("valid_balance_keys", envir = environment(), package = "yfinancer")
   if (!is.null(balance_keys) && !all(balance_keys %in% valid_balance_keys)) {
     rlang::abort(glue::glue("Invalid balance sheet keys: {balance_keys}. See yfinance::balance_keys for valid options."))
   }
@@ -231,7 +233,7 @@ get_balance_sheet <- function(ticker, freq = c("annual", "quarterly"),
 
   # Check if we have valid data
   if (is.null(resp_json$timeseries) || is.null(resp_json$timeseries$result) || length(resp_json$timeseries$result) == 0) {
-    warning(sprintf("No balance sheet data available for %s", ticker$symbol))
+    rlang::warn(sprintf("No balance sheet data available for %s", ticker$symbol))
     return(dplyr::tibble())
   }
 
@@ -285,17 +287,6 @@ get_balance_sheet <- function(ticker, freq = c("annual", "quarterly"),
 #'   start = "2020-01-01",
 #'   end = "2022-12-31"
 #' )
-#'
-#' # Error handling example
-#' tryCatch(
-#'   {
-#'     cash_flow <- get_cashflow("INVALID_TICKER")
-#'   },
-#'   error = function(e) {
-#'     message("Error retrieving cash flow data: ", e$message)
-#'     # Handle the error appropriately
-#'   }
-#' )
 #' }
 #' @export
 get_cashflow <- function(ticker, freq = c("annual", "quarterly"),
@@ -303,6 +294,7 @@ get_cashflow <- function(ticker, freq = c("annual", "quarterly"),
                          pretty = TRUE, wide = TRUE, proxy = NULL, output = c("tibble", "response", "request")) {
   output <- rlang::arg_match(output)
   freq <- rlang::arg_match(freq)
+  utils::data("valid_cashflow_keys", envir = environment(), package = "yfinancer")
   if (!is.null(cashflow_keys) && !all(cashflow_keys %in% valid_cashflow_keys)) {
     rlang::abort(glue::glue("Invalid cash flow keys: {cashflow_keys}. See yfinance::cashflow_keys for valid options."))
   }
@@ -356,7 +348,7 @@ get_cashflow <- function(ticker, freq = c("annual", "quarterly"),
 
   # Check if we have valid data
   if (is.null(resp_json$timeseries) || is.null(resp_json$timeseries$result) || length(resp_json$timeseries$result) == 0) {
-    warning(sprintf("No cash flow data available for %s", ticker$symbol))
+    rlang::warn(sprintf("No cash flow data available for %s", ticker$symbol))
     return(dplyr::tibble())
   }
 
@@ -494,22 +486,6 @@ process_timeseries_data <- function(result_data, pretty = TRUE, wide = TRUE) {
 #'   start = "2020-01-01",
 #'   end = "2022-12-31"
 #' )
-#'
-#' # Error handling for all financial statements
-#' tryCatch(
-#'   {
-#'     financials <- get_financials("INVALID_TICKER")
-#'   },
-#'   error = function(e) {
-#'     message("Error retrieving financial data: ", e$message)
-#'     # Handle the error appropriately
-#'   }
-#' )
-#'
-#' # Using a proxy to avoid rate limiting
-#' # Assuming you have a proxy service set up
-#' proxy_url <- "http://your-proxy-server:port"
-#' financials_with_proxy <- get_financials(apple, proxy = proxy_url)
 #' }
 #' @export
 get_financials <- function(ticker, freq = "annual",

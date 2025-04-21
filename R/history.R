@@ -191,6 +191,7 @@ repair_data <- function(data, repair = TRUE) {
 #'   end = "2022-12-31"
 #' )
 #' }
+#' @export
 get_history <- function(ticker,
                         period = "1mo",
                         interval = "1d",

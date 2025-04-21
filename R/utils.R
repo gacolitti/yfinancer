@@ -46,7 +46,7 @@ as_timestamp <- function(x, default = NULL) {
 #' @param minus_to_underscore By default `-` is replaced with `minus`.
 #'   This argument replaces the hyphen with `_` (underscore) instead.
 #'
-#' @export
+#' @keywords internal
 clean_names <- function(.data,
                         unique = FALSE,
                         minus_to_underscore = FALSE) {
@@ -54,7 +54,7 @@ clean_names <- function(.data,
 
   # If Non-ASCII characters found, return original strings
   if (any(grepl("[^ -~]", n))) {
-    warning("Found non-ASCII characters. Returning original names...", call. = FALSE)
+    rlang::warn("Found non-ASCII characters. Returning original names...")
     return(n)
   }
 
