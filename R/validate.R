@@ -59,6 +59,7 @@ validate_tickers <- function(symbols = NULL) {
 #' @param symbols A character vector of ticker symbols
 #' @return A character vector of parsed ticker symbols
 #' @keywords internal
+#' @noRd
 parse_ticker_symbols <- function(symbols) {
   if (!is.character(symbols) || length(symbols) == 0) {
     rlang::abort("Ticker symbols must be a non-empty character vector")
@@ -78,6 +79,7 @@ parse_ticker_symbols <- function(symbols) {
 #' @param original_symbols The original symbols that were requested
 #' @return A tibble with validation results
 #' @keywords internal
+#' @noRd
 extract_validation_results <- function(parsed_response, original_symbols) {
   # Initialize result tibble with all requested symbols
   result <- dplyr::tibble(
@@ -122,6 +124,7 @@ extract_validation_results <- function(parsed_response, original_symbols) {
 #' @param x The variable to check
 #' @return The variable `x`
 #' @keywords internal
+#' @noRd
 check_is_lgl <- function(x) {
   x_name <- rlang::as_string(rlang::ensym(x))
   if (!is.logical(x)) {
@@ -135,6 +138,7 @@ check_is_lgl <- function(x) {
 #' @param period A character string specifying the period (1d, 5d, 1mo, 3mo, 6mo, 1y, 2y, 5y, 10y, ytd, max)
 #' @return The validated period
 #' @keywords internal
+#' @noRd
 validate_period <- function(period) {
   valid_periods <- c("1d", "5d", "1mo", "3mo", "6mo", "1y", "2y", "5y", "10y", "ytd", "max")
 
@@ -150,6 +154,7 @@ validate_period <- function(period) {
 #' @param interval A character string specifying the interval (1m, 2m, 5m, 15m, 30m, 60m, 90m, 1h, 1d, 5d, 1wk, 1mo, 3mo)
 #' @return The validated interval
 #' @keywords internal
+#' @noRd
 validate_interval <- function(interval) {
   valid_intervals <- c("1m", "2m", "5m", "15m", "30m", "60m", "90m", "1h", "1d", "5d", "1wk", "1mo", "3mo")
 
@@ -165,6 +170,7 @@ validate_interval <- function(interval) {
 #' @param frequency A character string specifying the frequency (annual, quarterly)
 #' @return The validated frequency
 #' @keywords internal
+#' @noRd
 validate_frequency <- function(frequency) {
   valid_frequencies <- c("annual", "quarterly")
 

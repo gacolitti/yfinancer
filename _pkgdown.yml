@@ -1,0 +1,5 @@
+url: https://gacolitti.github.io/yfinancer/
+template:
+  bootstrap: 5
+  light-switch: true
+

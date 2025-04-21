@@ -1,6 +1,8 @@
 #' Get a random user agent
 #'
 #' @return A character string of a random user agent
+#' @keywords internal
+#' @noRd
 get_user_agent <- function() {
   sample(user_agents, 1)
 }
@@ -11,6 +13,7 @@ get_user_agent <- function() {
 #' @param req Request object
 #' @return Request object with added headers
 #' @keywords internal
+#' @noRd
 req_add_headers <- function(req) {
   req |>
     httr2::req_headers(

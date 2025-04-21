@@ -1,12 +1,14 @@
 #' Constants for Yahoo Finance API
 #'
 #' @keywords internal
+#' @noRd
 yf_base_url <- "https://query1.finance.yahoo.com"
 yf_query2_url <- "https://query2.finance.yahoo.com"
 
 #' Static user agents for yfinance package
 #'
 #' @keywords internal
+#' @noRd
 user_agents <- c(
   # Chrome
   "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/133.0.0.0 Safari/537.36",

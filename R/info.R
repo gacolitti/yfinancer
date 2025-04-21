@@ -20,6 +20,7 @@
 #' @param result_data The raw asset profile data from Yahoo Finance API
 #' @return A tibble containing the parsed asset profile data with nested company officers data
 #' @keywords internal
+#' @noRd
 parse_asset_profile <- function(result_data) {
   tbl <- dplyr::tibble(data = list(result_data)) |>
     tidyr::unnest_wider("data")
@@ -54,6 +55,7 @@ parse_asset_profile <- function(result_data) {
 #' @param result_data The raw balance sheet data from Yahoo Finance API
 #' @return A tibble containing the parsed balance sheet data with financial metrics
 #' @keywords internal
+#' @noRd
 parse_balance_sheet <- function(result_data) {
   if (!is.null(result_data$balanceSheetStatements)) {
     tbl <- dplyr::tibble(data = result_data$balanceSheetStatements) |>
@@ -73,6 +75,7 @@ parse_balance_sheet <- function(result_data) {
 #' @param result_data The raw cash flow statement data from Yahoo Finance API
 #' @return A tibble containing the parsed cash flow data with financial metrics
 #' @keywords internal
+#' @noRd
 parse_cashflow_statement <- function(result_data) {
   if (!is.null(result_data$cashflowStatements)) {
     tbl <- dplyr::tibble(data = list(result_data$cashflowStatements)) |>
@@ -89,6 +92,7 @@ parse_cashflow_statement <- function(result_data) {
 #' @param result_data The data to parse
 #' @return A tibble with parsed data
 #' @keywords internal
+#' @noRd
 parse_default_key_statistics <- function(result_data) {
   if (!is.null(result_data)) {
     tbl <- dplyr::tibble(data = list(result_data)) |>
@@ -109,6 +113,7 @@ parse_default_key_statistics <- function(result_data) {
 #' @param index Optional index for array elements
 #' @return Updated tibble with processed field data
 #' @keywords internal
+#' @noRd
 process_calendar_field <- function(tbl, field_data, prefix, is_array = FALSE,
                                    index = NULL) {
   if (!is.list(field_data)) {
@@ -142,6 +147,7 @@ process_calendar_field <- function(tbl, field_data, prefix, is_array = FALSE,
 #' @param earnings_data The earnings data to process
 #' @return Updated tibble with processed earnings data
 #' @keywords internal
+#' @noRd
 process_calendar_earnings <- function(tbl, earnings_data) {
   # Process scalar fields with raw/fmt/longFmt structures
   scalar_fields <- c(
@@ -188,6 +194,7 @@ process_calendar_earnings <- function(tbl, earnings_data) {
 #' @param result_data The data to parse
 #' @return A tibble with parsed data
 #' @keywords internal
+#' @noRd
 parse_calendar_events <- function(result_data) {
   # Start with the base tibble from the result data
   tbl <- dplyr::tibble(data = list(result_data)) |>
@@ -237,6 +244,7 @@ parse_calendar_events <- function(result_data) {
 #' @param result_tibbles The list of result tibbles to update
 #' @return Updated result_tibbles list with processed data
 #' @keywords internal
+#' @noRd
 process_chart_quarterly <- function(chart_data, field_name, result_name,
                                     result_tibbles = list()) {
   if (!is.null(chart_data) && field_name %in% names(chart_data)) {
@@ -265,6 +273,7 @@ process_chart_quarterly <- function(chart_data, field_name, result_name,
 #' @param result_tibbles The list of result tibbles to update
 #' @return Updated result_tibbles list with processed data
 #' @keywords internal
+#' @noRd
 process_current_quarter <- function(earnings_chart, result_tibbles = list()) {
   if (!is.null(earnings_chart) && "currentQuarterEstimate" %in% names(earnings_chart)) {
     # Extract relevant fields for current quarter
@@ -298,6 +307,7 @@ process_current_quarter <- function(earnings_chart, result_tibbles = list()) {
 #' @param result_tibbles The list of result tibbles to update
 #' @return Updated result_tibbles list with metadata
 #' @keywords internal
+#' @noRd
 process_earnings_metadata <- function(base_tbl, result_tibbles = list()) {
   if ("maxAge" %in% names(base_tbl)) {
     result_tibbles$metadata <- dplyr::tibble(
@@ -314,6 +324,7 @@ process_earnings_metadata <- function(base_tbl, result_tibbles = list()) {
 #' @param result_data The data to parse
 #' @return A list of tibbles with parsed data
 #' @keywords internal
+#' @noRd
 parse_earnings <- function(result_data) {
   # Start with the base tibble from the result data
   base_tbl <- dplyr::tibble(data = list(result_data)) |>
@@ -361,6 +372,7 @@ parse_earnings <- function(result_data) {
 #' @param result_data The data to parse
 #' @return A tibble with parsed data
 #' @keywords internal
+#' @noRd
 parse_earnings_history <- function(result_data) {
   earnings_history <- dplyr::tibble(data = list(result_data)) |>
     tidyr::unnest_wider("data") |>
@@ -375,6 +387,7 @@ parse_earnings_history <- function(result_data) {
 #' @param result_data The data to parse
 #' @return A tibble with parsed data
 #' @keywords internal
+#' @noRd
 parse_earnings_trend <- function(result_data) {
   earnings_trend <- dplyr::tibble(data = list(result_data)) |>
     tidyr::unnest_wider("data") |>
@@ -415,6 +428,7 @@ parse_earnings_trend <- function(result_data) {
 #' @param result_data The data to parse
 #' @return A tibble with parsed data
 #' @keywords internal
+#' @noRd
 parse_esg_scores <- function(result_data) {
   esg_scores <- dplyr::tibble(data = list(result_data)) |>
     tidyr::unnest_wider("data") |>
@@ -426,6 +440,7 @@ parse_esg_scores <- function(result_data) {
 #' @param result_data The data to parse
 #' @return A tibble with parsed data
 #' @keywords internal
+#' @noRd
 parse_fund_profile <- function(result_data) {
   fund_profile <- dplyr::tibble(data = list(result_data)) |>
     tidyr::unnest_wider("data") |>
@@ -439,6 +454,7 @@ parse_fund_profile <- function(result_data) {
 #' @param result_data The data to parse
 #' @return A tibble with parsed data
 #' @keywords internal
+#' @noRd
 parse_futures_chain <- function(result_data) {
   futures_chain <- dplyr::tibble(data = list(result_data$futuresChainDetails)) |>
     tidyr::unnest_wider("data") |>
@@ -450,6 +466,7 @@ parse_futures_chain <- function(result_data) {
 #' @param result_data The data to parse
 #' @return A tibble with parsed data
 #' @keywords internal
+#' @noRd
 parse_index_trend <- function(result_data) {
   index_trend <- dplyr::tibble(data = list(result_data)) |>
     tidyr::unnest_wider("data") |>
@@ -463,6 +480,7 @@ parse_index_trend <- function(result_data) {
 #' @param result_data The data to parse
 #' @return A tibble with parsed data
 #' @keywords internal
+#' @noRd
 parse_insider_holders <- function(result_data) {
   parse_ownership_data(result_data, "holders")
 }
@@ -471,6 +489,7 @@ parse_insider_holders <- function(result_data) {
 #' @param result_data The data to parse
 #' @return A tibble with parsed data
 #' @keywords internal
+#' @noRd
 parse_insider_transactions <- function(result_data) {
   parse_ownership_data(result_data, "transactions")
 }
@@ -479,6 +498,7 @@ parse_insider_transactions <- function(result_data) {
 #' @param result_data The data to parse
 #' @return A tibble with parsed data
 #' @keywords internal
+#' @noRd
 parse_institution_ownership <- function(result_data) {
   parse_ownership_data(result_data, "ownershipList")
 }
@@ -487,6 +507,7 @@ parse_institution_ownership <- function(result_data) {
 #' @param result_data The data to parse
 #' @return A tibble with parsed data
 #' @keywords internal
+#' @noRd
 parse_fund_ownership <- function(result_data) {
   parse_ownership_data(result_data, "ownershipList")
 }
@@ -495,6 +516,7 @@ parse_fund_ownership <- function(result_data) {
 #' @param result_data The data to parse
 #' @return A tibble with parsed data
 #' @keywords internal
+#' @noRd
 parse_recommendation_trend <- function(result_data) {
   recommendation_trend <- dplyr::tibble(data = list(result_data)) |>
     tidyr::unnest_wider("data") |>
@@ -507,6 +529,7 @@ parse_recommendation_trend <- function(result_data) {
 #' @param result_data The data to parse
 #' @return A tibble with parsed data
 #' @keywords internal
+#' @noRd
 parse_up_down_history <- function(result_data) {
   up_down_history <- dplyr::tibble(data = list(result_data)) |>
     tidyr::unnest_wider("data") |>
@@ -524,6 +547,7 @@ parse_up_down_history <- function(result_data) {
 #' @param result_data The raw income statement data from Yahoo Finance API
 #' @return A tibble containing the parsed income statement data with financial metrics
 #' @keywords internal
+#' @noRd
 parse_income_statement <- function(result_data) {
   income_statement_history <- dplyr::tibble(data = list(result_data)) |>
     tidyr::unnest_wider("data") |>
@@ -539,6 +563,7 @@ parse_income_statement <- function(result_data) {
 #' @param list_field The field containing the list of ownership data
 #' @return A tibble with parsed data
 #' @keywords internal
+#' @noRd
 parse_ownership_data <- function(result_data, list_field = "ownershipList") {
   ownership_data <- dplyr::tibble(data = list(result_data)) |>
     tidyr::unnest_wider("data") |>
@@ -553,6 +578,7 @@ parse_ownership_data <- function(result_data, list_field = "ownershipList") {
 #' @param result_data The data to parse
 #' @return A tibble with parsed data
 #' @keywords internal
+#' @noRd
 parse_sec_filings <- function(result_data) {
   sec_filings <- dplyr::tibble(data = list(result_data)) |>
     tidyr::unnest_wider("data") |>
@@ -573,6 +599,7 @@ parse_sec_filings <- function(result_data) {
 #' @param result_data The data to parse
 #' @return A tibble with parsed data
 #' @keywords internal
+#' @noRd
 parse_generic_module <- function(result_data) {
   if (is.null(result_data)) {
     return(dplyr::tibble())
@@ -595,6 +622,7 @@ parse_generic_module <- function(result_data) {
 #' @param module_name The name of the module to parse (e.g., "assetProfile", "incomeStatementHistory")
 #' @return A tibble containing the parsed data specific to the module type
 #' @keywords internal
+#' @noRd
 parse_module_data <- function(result_data, module_name) {
   if (is.null(result_data) || length(result_data) == 0) {
     return(dplyr::tibble())
@@ -654,6 +682,7 @@ parse_module_data <- function(result_data, module_name) {
 #' @param is_numeric Whether the field is numeric
 #' @return Vector of extracted values
 #' @keywords internal
+#' @noRd
 extract_nested_field <- function(col_data, field_name,
                                  is_numeric = TRUE) {
   if (is_numeric) {
@@ -685,6 +714,7 @@ extract_nested_field <- function(col_data, field_name,
 #' @param col_data List column data
 #' @return Boolean indicating if the column contains nested structures
 #' @keywords internal
+#' @noRd
 has_nested_structure <- function(col_data) {
   if (length(col_data) == 0) {
     return(FALSE)
@@ -710,6 +740,7 @@ has_nested_structure <- function(col_data) {
 #' @param col_prefix Prefix to use for new columns
 #' @return Updated tibble with processed column
 #' @keywords internal
+#' @noRd
 process_nested_column <- function(tibble, col, col_prefix) {
   # Extract raw values if they exist
   # Check for raw values
@@ -782,6 +813,7 @@ process_nested_column <- function(tibble, col, col_prefix) {
 #'               followed by the appropriate suffix (Raw, Fmt, LongFmt, Min, Avg, Max)
 #' @return A processed tibble with nested structures appropriately unnested
 #' @keywords internal
+#' @noRd
 process_nested_cols <- function(tibble, prefix = NULL) {
   if (nrow(tibble) == 0 || ncol(tibble) == 0) {
     return(tibble)
